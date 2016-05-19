@@ -5,15 +5,20 @@ CC1101 cc1101;
 
 SPI spi;
 
-uint8_t counter = 0;
-uint8_t b;
+// Pins are
+
+// MOSI: 11
+// MISO: 12
+// CSN: 10
+// SCK: 13
+// GDO0: 2
 
 // SETUP HERE
 void setup()
 {
   // Set alternate SCK pin https://www.pjrc.com/teensy/td_libs_SPI.html#altpins
   // Not working - probably to do with local library spi.h
-  //SPI.setSCK(sckPIN);
+  //SPI.setSCK(14);
   //spi.init(10,11,12,14);
   
   //pinMode(ledPin, OUTPUT);
@@ -41,7 +46,7 @@ void setup()
   // DRATE = 1000000.0 * MHZ * (256+drate_m) * powf(2,drate_e) / powf(2,28);
   cc1101.writeReg(0x11, 0xC3);
 
-  // MDMCFG2 - Modulation type / manchester / sync mode 
+  // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode 
   cc1101.writeReg(0x12, 0x30);  
 
   // MDMCFG1 - FEC / preamble
