@@ -74,10 +74,8 @@ void setup()
 void send_data() {
 
   Serial.println("sending data");
-  //cc1101.flushTxFifo();
 
   CCPACKET data;
-  //byte blinkCount = counter++;
 
   data.length = 5;
 
