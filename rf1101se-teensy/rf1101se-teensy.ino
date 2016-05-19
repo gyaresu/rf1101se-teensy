@@ -1,20 +1,12 @@
 #include "EEPROM.h"
-//#include "rf1101.h"
-
 #include "cc1101.h"
-//#include "i2c_t3.h"
 
 CC1101 cc1101;
 
 SPI spi;
 
-//uint8_t sckPIN = 14;
 uint8_t counter = 0;
 uint8_t b;
-
-//uint8_t ledPin = 13;
-//byte syncWord = 0x55;
-//byte syncWord[] = {0x55, 0x55};
 
 // SETUP HERE
 void setup()
@@ -23,7 +15,6 @@ void setup()
   // Not working - probably to do with local library spi.h
   //SPI.setSCK(sckPIN);
   //spi.init(10,11,12,14);
-  //spi.init();
   
   //pinMode(ledPin, OUTPUT);
   Serial.begin(9600);
@@ -36,24 +27,27 @@ void setup()
   cc1101.init();
   
   cc1101.setSyncWord(syncH, syncL, false);
-  //cc1101.setSyncWord(syncWord, false);
   cc1101.setCarrierFreq(CFREQ_433);
   cc1101.disableAddressCheck();
   cc1101.setTxPowerAmp(PA_LowPower);
   
+  // Messign with direct register changes below to then look at in Inspectrum 
+  // https://github.com/miek/inspectrum
   
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xE5);
 
   // MDMCFG3 - Data Rate
-  //DRATE = 1000000.0 * MHZ * (256+drate_m) * powf(2,drate_e) / powf(2,28);
+  // DRATE = 1000000.0 * MHZ * (256+drate_m) * powf(2,drate_e) / powf(2,28);
   cc1101.writeReg(0x11, 0xC3);
 
-  // MDMCFG2 - Modem configuration
+  // MDMCFG2 - Modulation type / manchester / sync mode 
   cc1101.writeReg(0x12, 0x30);  
 
+  // MDMCFG1 - FEC / preamble
   cc1101.writeReg(0x13, 0x22);
 
+  // MDMCFG0 - Channel spacing
   cc1101.writeReg(0x14, 0xF8);
   
   delay(1000);
