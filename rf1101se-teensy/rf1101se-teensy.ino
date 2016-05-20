@@ -36,7 +36,7 @@ void setup()
   cc1101.disableAddressCheck();
   cc1101.setTxPowerAmp(PA_LowPower);
   
-  // Messign with direct register changes below to then look at in Inspectrum 
+  // Messing with direct register changes below to then look at in Inspectrum
   // https://github.com/miek/inspectrum
   
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
@@ -47,10 +47,10 @@ void setup()
   cc1101.writeReg(0x11, 0xC3);
 
   // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode 
-  cc1101.writeReg(0x12, 0x30);  
+  cc1101.writeReg(0x12, 0x32); // was 0x30
 
   // MDMCFG1 - FEC / preamble
-  cc1101.writeReg(0x13, 0x22);
+  cc1101.writeReg(0x13, 0x02); // was 0x22
 
   // MDMCFG0 - Channel spacing
   cc1101.writeReg(0x14, 0xF8);
@@ -65,13 +65,14 @@ void setup()
   Serial.print("CC1101_MARCSTATE ");
   Serial.println(cc1101.readReg(CC1101_MARCSTATE, CC1101_STATUS_REGISTER) & 0x1f);
 
+  Serial.print("PKTCTRL0: Data whitening / ");
+  Serial.println(cc1101.readReg(0x08, CC1101_CONFIG_REGISTER));
   Serial.print("MDMCFG4: Channel BW ");
   Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER));
   Serial.print("MDMCFG3: Data Rate (Baud) ");
   Serial.println(cc1101.readReg(0x11, CC1101_CONFIG_REGISTER));
   Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode ");
   Serial.println(cc1101.readReg(0x12, CC1101_CONFIG_REGISTER));
-  
   Serial.println("device initialized");
 }
 
