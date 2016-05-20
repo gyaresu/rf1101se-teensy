@@ -4,12 +4,13 @@ import sys
 def init(device):
     d.setMdmModulation(MOD_ASK_OOK)
     d.setFreq(433000000)
-    d.setMdmSyncMode(2)
+    d.setMdmSyncMode(0x02)
     d.setMdmSyncWord(0xEEEE)
-    d.setMdmDRate(115200)
+    d.setMdmDRate(1394)
     d.makePktFLEN(5)
-    d.setMdmNumPreamble(16)
-    d.setPktPQT(2)
+    d.setMdmNumPreamble(0)
+    d.setPktPQT(1)
+    d.setMaxPower()
 
 
     d.printRadioConfig()
