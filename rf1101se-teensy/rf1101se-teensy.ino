@@ -5,6 +5,9 @@ CC1101 cc1101;
 
 SPI spi;
 
+// Texas Instruments CC1101 reference
+// http://www.ti.com/lit/ds/symlink/cc1101.pdf (pdf)
+
 // Pins are
 
 // MOSI: 11
@@ -16,16 +19,17 @@ SPI spi;
 // SETUP HERE
 void setup()
 {
+  // Setting alternate SCK pin to 14 working but pin 13 (LED) works fine.
   // Set alternate SCK pin https://www.pjrc.com/teensy/td_libs_SPI.html#altpins
-  // Not working - probably to do with local library spi.h
-  //SPI.setSCK(14);
-  //spi.init(10,11,12,14);
+  // I am using pin 13 
+  // SPI.setSCK(14);
+  // spi.init(10,11,12,14);
   
   //pinMode(ledPin, OUTPUT);
   Serial.begin(9600);
 
   // SyncWord
-  uint8_t syncH = 0xEE;
+  uint8_t syncH = 0xEE; // 11101110 twice gives you a sync word of 1110111011101110
   uint8_t syncL = 0xEE;
 
   // Initialize the CC Chip
@@ -47,10 +51,12 @@ void setup()
   cc1101.writeReg(0x11, 0xC3);
 
   // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode 
+  // 00110010 - DC blocking enabled, OOK/ASK, No manchester, 16/16 syncword bits detected
   cc1101.writeReg(0x12, 0x32); // was 0x30
 
   // MDMCFG1 - FEC / preamble
-  cc1101.writeReg(0x13, 0x02); // was 0x22
+  // 00000010 - No FEC, 2 bytes of preamble, reserved, two bit exponent of channel spacing
+  cc1101.writeReg(0x13, 0x02); // Changed from 0x22
 
   // MDMCFG0 - Channel spacing
   cc1101.writeReg(0x14, 0xF8);
