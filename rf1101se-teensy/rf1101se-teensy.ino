@@ -21,10 +21,10 @@ void setup()
 {
   // Setting alternate SCK pin to 14 working but pin 13 (LED) works fine.
   // Set alternate SCK pin https://www.pjrc.com/teensy/td_libs_SPI.html#altpins
-  // I am using pin 13 
+  // I am using pin 13
   // SPI.setSCK(14);
   // spi.init(10,11,12,14);
-  
+
   //pinMode(ledPin, OUTPUT);
   Serial.begin(9600);
 
@@ -34,15 +34,15 @@ void setup()
 
   // Initialize the CC Chip
   cc1101.init();
-  
+
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
   cc1101.disableAddressCheck();
-  cc1101.setTxPowerAmp(PA_LowPower);
-  
+  //cc1101.setTxPowerAmp(PA_LowPower);
+
   // Messing with direct register changes below to then look at in Inspectrum
   // https://github.com/miek/inspectrum
-  
+
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xE5);
 
@@ -50,7 +50,7 @@ void setup()
   // DRATE = 1000000.0 * MHZ * (256+drate_m) * powf(2,drate_e) / powf(2,28);
   cc1101.writeReg(0x11, 0xC3);
 
-  // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode 
+  // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode
   // 00110010 - DC blocking enabled, OOK/ASK, No manchester, 16/16 syncword bits detected
   cc1101.writeReg(0x12, 0x32); // was 0x30
 
@@ -63,7 +63,13 @@ void setup()
 
   // PKTCTRL0 - Set CRC
   cc1101.writeReg(0x08, 0x04); // Was 0x00 for no CRC check and fixed packet length
-  
+
+  // FREND0 - Select PATABLE index to use when sending a '1'
+  cc1101.writeReg(0x22, 0x11);
+
+  // Define what a strong '1' signal is in the second byte of the PATABLE
+  set_patable();
+
   delay(1000);
 
   Serial.println("Radio initialising\n");
@@ -96,7 +102,7 @@ void send_data() {
   data.length = 5;
 
   // If you just put numbers i.e. 5,4,3,2,1 they will be taken as HEX so I write it explicitly here.
-  
+
   data.data[0] = 0x05; // 00000101
   data.data[1] = 0x04; // 00000100
   data.data[2] = 0x03; // 00000011
@@ -117,4 +123,12 @@ void loop()
 {
   send_data();
   delay(2000);
+}
+
+
+// Set the PATABLE[1] with signal strength of a binary '1'. In OOK mode it will use PATABLE[0] for '0' strength.
+void set_patable()
+{
+  byte PA_TABLE[] = {0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  cc1101.writeBurstReg(0x3E, PA_TABLE, 8);
 }
