@@ -12,5 +12,5 @@ The Arduino SPI module has a method that lets you do that but it doesn't work wi
 
 So ```SPI.setSCK(pin)``` doesn't work.
 
-
+![https://github.com/gyaresu/rf1101se-teensy/blob/master/rf1101-teensy.png](https://github.com/gyaresu/rf1101se-teensy/blob/master/rf1101-teensy.png)
 
