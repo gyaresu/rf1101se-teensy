@@ -1,6 +1,23 @@
 #include "EEPROM.h"
 #include "cc1101.h"
 
+/*
+DON'T PANIC
+
+Seriously... All this stuff is annoyingly difficult to learn because the data sheets are 
+close enought to incomprehensible and the examples are obtuse and...
+
+Working with microcontrollers doesn't need to be so difficult. It's their fault, not yours.
+
+Better writers, better social advocates and better engagement would make this a lot more fun ffs...
+
+IT'S NOT YOU, that's the problem...
+
+Good luck 
+
+@gareth__
+*/
+
 CC1101 cc1101;
 
 SPI spi;
