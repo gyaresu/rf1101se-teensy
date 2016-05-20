@@ -91,11 +91,16 @@ void send_data() {
 
   data.length = 5;
 
-  data.data[0] = 5;
-  data.data[1] = 4;
-  data.data[2] = 3;
-  data.data[3] = 2;
-  data.data[4] = 1;
+  // If you just put numbers i.e. 5,4,3,2,1 they will be taken as HEX so I write it explicitly here.
+  
+  data.data[0] = 0x05; // 00000101
+  data.data[1] = 0x04; // 00000100
+  data.data[2] = 0x03; // 00000011
+  data.data[3] = 0x02; // 00000010
+  data.data[4] = 0x01; // 00000001
+
+  // Invert the bits in inspectrum
+  // hex(~0b1111101011111011111111001111110111111110 & 0xFFFFFFFFFF)
 
   if (cc1101.sendData(data)) {
     Serial.println(" sent ok :)");
