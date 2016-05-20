@@ -60,6 +60,9 @@ void setup()
 
   // MDMCFG0 - Channel spacing
   cc1101.writeReg(0x14, 0xF8);
+
+  // PKTCTRL0 - Set CRC
+  cc1101.writeReg(0x08, 0x04); // Was 0x00 for no CRC check and fixed packet length
   
   delay(1000);
 
@@ -70,14 +73,15 @@ void setup()
   Serial.println(cc1101.readReg(CC1101_VERSION, CC1101_STATUS_REGISTER));
   Serial.print("CC1101_MARCSTATE ");
   Serial.println(cc1101.readReg(CC1101_MARCSTATE, CC1101_STATUS_REGISTER) & 0x1f);
-
-  Serial.print("PKTCTRL0: Data whitening / ");
+  Serial.print("PKTCTRL1: PQT / RSSI, LQI & CRC OK - ");
+  Serial.println(cc1101.readReg(0x07, CC1101_CONFIG_REGISTER));
+  Serial.print("PKTCTRL0: Data whitening / Packet format / CRC Check / Packet length - ");
   Serial.println(cc1101.readReg(0x08, CC1101_CONFIG_REGISTER));
-  Serial.print("MDMCFG4: Channel BW ");
+  Serial.print("MDMCFG4: Channel BW - ");
   Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER));
-  Serial.print("MDMCFG3: Data Rate (Baud) ");
+  Serial.print("MDMCFG3: Data Rate (Baud) - ");
   Serial.println(cc1101.readReg(0x11, CC1101_CONFIG_REGISTER));
-  Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode ");
+  Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode - ");
   Serial.println(cc1101.readReg(0x12, CC1101_CONFIG_REGISTER));
   Serial.println("device initialized");
 }
