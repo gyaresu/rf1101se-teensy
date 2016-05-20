@@ -19,9 +19,9 @@ SPI spi;
 // SETUP HERE
 void setup()
 {
-  // Setting alternate SCK pin to 14 working but pin 13 (LED) works fine.
+  // Setting alternate SCK pin to 14 does not work but pin 13 (LED) works fine.
   // Set alternate SCK pin https://www.pjrc.com/teensy/td_libs_SPI.html#altpins
-  // I am using pin 13
+  // **I am using pin 13 in this sketch**
   // SPI.setSCK(14);
   // spi.init(10,11,12,14);
 
