@@ -12,9 +12,9 @@ Now all of this works with the Arduino 'whatever' but if you have a 'whatever' t
 
 Teensy is your basic honey badger of microcontrollers.
 
-Now the rf1101se-v3.1 is probably only good for 433MHz because the one I have is missing resistors on the circuit board that would enable it ot be useful at any other frequencies. So it's not the chip that's at fault, just the cheap board design.
+Now the rf1101se-v3.1 is probably only good for 433MHz because the one I have is missing resistors on the circuit board that would enable it to be useful at any other frequencies. So it's not the chip that's at fault, just the cheap board design.
 
-Ok, so this has been tested with a Teensy 3.1 but it shoul work with with a Teensy 3.0 or 3.2 because that's how they're built.
+Ok, so this has been tested with a Teensy 3.1 but it should work with with a Teensy 3.0 or 3.2 because that's how they're built.
 
 p.s. If you know how to move from pin 13 for CLK to pin 14 (alternate SPI pins for Teensy), let me know.
 
