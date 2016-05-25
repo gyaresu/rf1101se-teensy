@@ -9,7 +9,7 @@ def init(device):
     d.setMdmDRate(1394)
     d.makePktFLEN(5)
     d.setMdmNumPreamble(0)
-    d.setPktPQT(1)
+    d.setPktPQT(3)
     d.setMaxPower()
 
 

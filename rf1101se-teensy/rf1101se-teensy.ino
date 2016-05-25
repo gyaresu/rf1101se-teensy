@@ -126,7 +126,7 @@ void send_data() {
   data.data[3] = 0x02; // 00000010
   data.data[4] = 0x01; // 00000001
 
-  // Invert the bits in inspectrum
+  // Handy trick to invert bits in python
   // hex(~0b1111101011111011111111001111110111111110 & 0xFFFFFFFFFF)
 
   if (cc1101.sendData(data)) {
@@ -144,6 +144,7 @@ void loop()
 
 
 // Set the PATABLE[1] with signal strength of a binary '1'. In OOK mode it will use PATABLE[0] for '0' strength.
+// Table 30 on page 50 shows the optimal power setting per frequency. 0xC0 is highest, 0x60 is default.
 void set_patable()
 {
   byte PA_TABLE[] = {0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
