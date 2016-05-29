@@ -5,7 +5,7 @@
 DON'T PANIC
 
 Seriously... All this stuff is annoyingly difficult to learn because the data sheets are 
-close enought to incomprehensible and the examples are obtuse and...
+close enough to incomprehensible and the examples are obtuse and...
 
 Working with microcontrollers doesn't need to be so difficult. It's their fault, not yours.
 
