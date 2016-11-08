@@ -1,7 +1,7 @@
 from rflib import *
 import sys
 
-def init(device):
+def init(d):
     d.setMdmModulation(MOD_ASK_OOK)
     d.setFreq(433000000)
     d.setMdmSyncMode(0x02)
