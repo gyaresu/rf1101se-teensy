@@ -122,6 +122,7 @@ void send_data() {
   // If you just put numbers i.e. 5,4,3,2,1 they will be taken as HEX so I write it explicitly here.
   
   byte thing[61] = {0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
+  
   memcpy(data.data, thing, sizeof(data.data));
    
   // Handy trick to invert bits in python
