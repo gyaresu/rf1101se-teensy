@@ -2,20 +2,20 @@
 #include "cc1101.h"
 
 /*
-DON'T PANIC
+  DON'T PANIC
 
-Seriously... All this stuff is annoyingly difficult to learn because the data sheets are 
-close enought to incomprehensible and the examples are obtuse and...
+  Seriously... All this stuff is annoyingly difficult to learn because the data sheets are
+  close enought to incomprehensible and the examples are obtuse and...
 
-Working with microcontrollers doesn't need to be so difficult. It's their fault, not yours.
+  Working with microcontrollers doesn't need to be so difficult. It's their fault, not yours.
 
-Better writers, better social advocates and better engagement would make this a lot more fun ffs...
+  Better writers, better social advocates and better engagement would make this a lot more fun ffs...
 
-IT'S NOT YOU, that's the problem...
+  IT'S NOT YOU, that's the problem...
 
-Good luck 
+  Good luck
 
-@gareth__
+  @gareth__
 */
 
 CC1101 cc1101;
@@ -112,30 +112,32 @@ void setup()
 // SEND DATA TO RF1101SE
 void send_data() {
 
+  Serial.println("\n");
   Serial.println("sending data");
 
   CCPACKET data;
 
-  data.length = 5;
+  data.length = 8;
 
   // If you just put numbers i.e. 5,4,3,2,1 they will be taken as HEX so I write it explicitly here.
 
-  data.data[0] = 0x05; // 00000101
-  data.data[1] = 0x04; // 00000100
-  data.data[2] = 0x03; // 00000011
-  data.data[3] = 0x02; // 00000010
-  data.data[4] = 0x01; // 00000001
-
+  //data.data = {0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
+   byte thing[61] = {0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
+   data.data[61] = *thing;
+   
   // Handy trick to invert bits in python
   // hex(~0b1111101011111011111111001111110111111110 & 0xFFFFFFFFFF)
 
   if (cc1101.sendData(data)) {
     Serial.println("Packet sent ok :)");
-    Serial.print(data.data[0], HEX);
-    Serial.print(data.data[1], HEX);
-    Serial.print(data.data[2], HEX);
-    Serial.print(data.data[3], HEX);
-    Serial.println(data.data[4], HEX);
+    Serial.print("Packet length is: ");
+    Serial.print(data.length);
+    Serial.println(" bytes.");
+    //Serial.print(data.data[0], HEX);
+    for (int i = 0; i < data.length; i++) {
+      Serial.print(data.data[i], DEC);
+      Serial.print(" ");
+    }
   } else {
     Serial.println("sent failed :(");
   }
@@ -155,4 +157,5 @@ void set_patable()
   byte PA_TABLE[] = {0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   cc1101.writeBurstReg(0x3E, PA_TABLE, 8);
 }
+
 
