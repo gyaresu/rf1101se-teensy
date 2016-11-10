@@ -1,22 +1,6 @@
 #include "EEPROM.h"
 #include "cc1101.h"
 
-/*
-  DON'T PANIC
-
-  Seriously... All this stuff is annoyingly difficult to learn because the data sheets are
-  close enought to incomprehensible and the examples are obtuse and...
-
-  Working with microcontrollers doesn't need to be so difficult. It's their fault, not yours.
-
-  Better writers, better social advocates and better engagement would make this a lot more fun ffs...
-
-  IT'S NOT YOU, that's the problem...
-
-  Good luck
-
-  @gareth__
-*/
 
 CC1101 cc1101;
 
@@ -25,24 +9,31 @@ SPI spi;
 // Texas Instruments CC1101 reference
 // http://www.ti.com/lit/ds/symlink/cc1101.pdf (pdf)
 
-// Pins are
-
-// MOSI: 11
-// MISO: 12
-// CSN: 10
-// SCK: 13
-// GDO0: 2
+/* 
+ *  Pins require 7 wires.
+ *  MOSI: 11
+ *  MISO: 12
+ *  CSN: 10
+ *  SCK: 13
+ *  GDO0: 2
+ *  GND 
+ *  VCC
+ */
 
 // SETUP HERE
+
+// Set the PATABLE[1] with signal strength of a binary '1'. In OOK mode it will use PATABLE[0] for '0' strength.
+// Table 30 on page 50 shows the optimal power setting per frequency. 0xC0 is highest, 0x60 is default.
+// cc1101.setTxPowerAmp(PA_LowPower); // helper function
+
+void set_patable()
+{
+  byte PA_TABLE[] = {0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  cc1101.writeBurstReg(0x3E, PA_TABLE, 8);
+}
+
 void setup()
 {
-  // Setting alternate SCK pin to 14 does not work but pin 13 (LED) works fine.
-  // Set alternate SCK pin https://www.pjrc.com/teensy/td_libs_SPI.html#altpins
-  // **I am using pin 13 in this sketch**
-  // SPI.setSCK(14);
-  // spi.init(10,11,12,14);
-
-  //pinMode(ledPin, OUTPUT);
   Serial.begin(9600);
 
   // SyncWord
@@ -54,11 +45,17 @@ void setup()
 
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
-  cc1101.disableAddressCheck();
-  //cc1101.setTxPowerAmp(PA_LowPower);
 
-  // Messing with direct register changes below to then look at in Inspectrum
-  // https://github.com/miek/inspectrum
+  // Address checking will enable us to speak only to specific devices
+  // PKTCTRL1 (page 67) enables the 'address check'.
+  // Disabled is 0x04, enabled is 0x06.
+  // The library has shorthands instead of writing directly to the register
+  cc1101.disableAddressCheck();
+  // cc1101.enableAddressCheck();
+  //cc1101.writeReg(0x07, 0x04); // enabled
+
+  // Which address are we looking for?
+  cc1101.writeReg(0x09, 0xdb); // 0b11011011 
 
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xE5);
@@ -84,7 +81,7 @@ void setup()
   // FREND0 - Select PATABLE index to use when sending a '1'
   cc1101.writeReg(0x22, 0x11);
 
-  // Define what a strong '1' signal is in the second byte of the PATABLE
+  // Set signal strenth
   set_patable();
 
   delay(1000);
@@ -107,58 +104,26 @@ void setup()
   Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode - ");
   Serial.println(cc1101.readReg(0x12, CC1101_CONFIG_REGISTER));
   Serial.println("device initialized");
+
+  // You can set an interupt or poll on GDO0, pin 2 (page 35)
+  attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
 }
 
-// SEND DATA TO RF1101SE
-void send_data() {
 
-  Serial.println("\n");
-  Serial.println("sending data");
 
+void isr()
+{
+    
   CCPACKET data;
 
-  
-
-  // If you just put numbers i.e. 5,4,3,2,1 they will be taken as HEX so I write it explicitly here.
-  
-  byte thing[30] = {0x50, 0x50, 0x20, 0x4A, 0x65, 0x73, 0x73, 0x2C, 0x20, 0x44, 0x6F, 0x6E, 0x27, 0x74, 0x20, 0x77, 0x6F, 0x72, 0x72, 0x79,
-  0x20, 0x62, 0x65, 0x20, 0x68, 0x61, 0x70, 0x70, 0x79, 0x21};
-  
-  data.length = sizeof(thing);
-  Serial.println(data.length);
-  memcpy(data.data, thing, sizeof(data.data));
-   
-  // Handy trick to invert bits in python
-  // hex(~0b1111101011111011111111001111110111111110 & 0xFFFFFFFFFF)
-
-  if (cc1101.sendData(data)) {
-    Serial.println("Packet sent ok :)");
-    Serial.print("Packet length is: ");
-    Serial.print(data.length);
-    Serial.println(" bytes.");
-    //Serial.print(data.data[0], HEX);
-    for (int i = 0; i < data.length; i++) {
-      Serial.print(data.data[i], HEX);
-      Serial.print(" ");
-    }
-  } else {
-    Serial.println("sent failed :(");
-  }
+  Serial.println(cc1101.receiveData(&data));
 }
 
 void loop()
 {
-  send_data();
-  delay(2000);
+  //isr();
+  //delay(2000);
 }
 
-
-// Set the PATABLE[1] with signal strength of a binary '1'. In OOK mode it will use PATABLE[0] for '0' strength.
-// Table 30 on page 50 shows the optimal power setting per frequency. 0xC0 is highest, 0x60 is default.
-void set_patable()
-{
-  byte PA_TABLE[] = {0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-  cc1101.writeBurstReg(0x3E, PA_TABLE, 8);
-}
 
 
