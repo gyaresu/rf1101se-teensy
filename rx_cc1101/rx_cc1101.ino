@@ -50,11 +50,19 @@ void setup()
   // PKTCTRL1 (page 67) enables the 'address check'.
   // Disabled is 0x04, enabled is 0x06.
   // The library has shorthands instead of writing directly to the register
-  cc1101.disableAddressCheck();
+  // cc1101.disableAddressCheck();
   // cc1101.enableAddressCheck();
-  //cc1101.writeReg(0x07, 0x04); // enabled
 
-  // Which address are we looking for?
+  // PKTLEN - Packet Length
+  cc1101.writeReg(0x06, 0x08); // 8 bytes of payload(?)
+  
+  // PKTCTRL1 - Packet Automation Control
+  cc1101.writeReg(0x07, 0x04); // enabled
+
+  // PKTCTRL0 - Packet Automation Control
+  cc1101.writeReg(0x08, 0x07);
+
+  // ADDR - Device Address
   cc1101.writeReg(0x09, 0xdb); // 0b11011011 
 
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
@@ -74,9 +82,6 @@ void setup()
 
   // MDMCFG0 - Channel spacing
   cc1101.writeReg(0x14, 0xF8);
-
-  // PKTCTRL0 - Set CRC
-  cc1101.writeReg(0x08, 0x04); // Was 0x00 for no CRC check and fixed packet length
 
   // FREND0 - Select PATABLE index to use when sending a '1'
   cc1101.writeReg(0x22, 0x11);

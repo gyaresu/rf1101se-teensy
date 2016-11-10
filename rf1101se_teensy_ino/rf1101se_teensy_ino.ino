@@ -5,7 +5,7 @@
   DON'T PANIC
 
   Seriously... All this stuff is annoyingly difficult to learn because the data sheets are
-  close enought to incomprehensible and the examples are obtuse and...
+  close enough to incomprehensible and the examples are obtuse and...
 
   Working with microcontrollers doesn't need to be so difficult. It's their fault, not yours.
 
@@ -25,13 +25,16 @@ SPI spi;
 // Texas Instruments CC1101 reference
 // http://www.ti.com/lit/ds/symlink/cc1101.pdf (pdf)
 
-// Pins are
-
-// MOSI: 11
-// MISO: 12
-// CSN: 10
-// SCK: 13
-// GDO0: 2
+/* 
+ *  Pins require 7 wires.
+ *  MOSI: 11
+ *  MISO: 12
+ *  CSN: 10
+ *  SCK: 13
+ *  GDO0: 2
+ *  GND 
+ *  VCC
+ */
 
 // SETUP HERE
 void setup()
@@ -114,7 +117,7 @@ void setup()
   Serial.println("device initialized");
 }
 
-// SEND DATA TO RF1101SE
+// SEND DATA TO cc1101
 void send_data() {
 
   Serial.println("\n");
@@ -122,23 +125,12 @@ void send_data() {
 
   CCPACKET data;
 
+  byte thing[] = {0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
   
-
-  // If you just put numbers i.e. 5,4,3,2,1 they will be taken as HEX so I write it explicitly here.
-  
-<<<<<<< HEAD
-  byte thing[30] = {0x50, 0x50, 0x20, 0x4A, 0x65, 0x73, 0x73, 0x2C, 0x20, 0x44, 0x6F, 0x6E, 0x27, 0x74, 0x20, 0x77, 0x6F, 0x72, 0x72, 0x79,
-  0x20, 0x62, 0x65, 0x20, 0x68, 0x61, 0x70, 0x70, 0x79, 0x21};
+  memcpy(data.data, thing, sizeof(data.data));
   
   data.length = sizeof(thing);
   Serial.println(data.length);
-=======
-  byte thing[] = {0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
->>>>>>> 67d13008c07203ed6f9dd63596dbf203f04da373
-  memcpy(data.data, thing, sizeof(data.data));
-   
-  // Handy trick to invert bits in python
-  // hex(~0b1111101011111011111111001111110111111110 & 0xFFFFFFFFFF)
 
   if (cc1101.sendData(data)) {
     Serial.println("Packet sent ok :)");
