@@ -22,15 +22,7 @@ SPI spi;
 
 // SETUP HERE
 
-// Set the PATABLE[1] with signal strength of a binary '1'. In OOK mode it will use PATABLE[0] for '0' strength.
-// Table 30 on page 50 shows the optimal power setting per frequency. 0xC0 is highest, 0x60 is default.
-// cc1101.setTxPowerAmp(PA_LowPower); // helper function
 
-void set_patable()
-{
-  byte PA_TABLE[] = {0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-  cc1101.writeBurstReg(0x3E, PA_TABLE, 8);
-}
 
 void setup()
 {
@@ -46,24 +38,24 @@ void setup()
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
 
+  // PKTLEN - Packet Length
+  cc1101.writeReg(0x06, 0x08); // 8 bytes of payload(?)
+
   // Address checking will enable us to speak only to specific devices
   // PKTCTRL1 (page 67) enables the 'address check'.
-  // Disabled is 0x04, enabled is 0x06.
   // The library has shorthands instead of writing directly to the register
   // cc1101.disableAddressCheck();
   // cc1101.enableAddressCheck();
-
-  // PKTLEN - Packet Length
-  cc1101.writeReg(0x06, 0x08); // 8 bytes of payload(?)
   
   // PKTCTRL1 - Packet Automation Control
-  cc1101.writeReg(0x07, 0x04); // enabled
+  cc1101.writeReg(0x07, 0x04); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
 
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x07);
 
   // ADDR - Device Address
   cc1101.writeReg(0x09, 0xdb); // 0b11011011 
+  cc1101.writeReg(0x09, 0x00);
 
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xE5);
@@ -86,9 +78,9 @@ void setup()
   // FREND0 - Select PATABLE index to use when sending a '1'
   cc1101.writeReg(0x22, 0x11);
 
-  // Set signal strenth
-  set_patable();
-
+  // Set RX only
+  cc1101.setRxState();
+  
   delay(1000);
 
   Serial.println("Radio initialising\n");
@@ -118,16 +110,26 @@ void setup()
 
 void isr()
 {
+  Serial.println("Interrupt triggered.");
     
-  CCPACKET data;
-
-  Serial.println(cc1101.receiveData(&data));
+    CCPACKET p;
+    
+    if (cc1101.receiveData(&p) > 0) {
+      if (p.length > 0) {
+        Serial.print("Packet length: ");
+        Serial.println(p.length);
+        
+        for (int i = 0; i < p.length; i++) {
+          Serial.print(p.data[i], HEX);
+        }
+      }
+    }
 }
 
 void loop()
 {
-  //isr();
-  //delay(2000);
+  Serial.println("Waiting for packets to interrupt...");
+  delay(2000);
 }
 
 
