@@ -54,12 +54,19 @@ void setup()
 
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
-  cc1101.disableAddressCheck();
-  //cc1101.setTxPowerAmp(PA_LowPower);
-
-  // Messing with direct register changes below to then look at in Inspectrum
-  // https://github.com/miek/inspectrum
-
+  
+  // PKTLEN
+  cc1101.writeReg(0x06, 0x08);
+  
+  // PKTCTRL1 - Packet Automation Control
+  cc1101.writeReg(0x07, 0x07);
+  
+  // PKTCTRL0 - Packet Automation Control
+  cc1101.writeReg(0x08, 0x00); // Was 0x00 for no CRC check and fixed packet length
+  
+  // ADDR - Device Address
+  cc1101.writeReg(0x09, 0xDB); // 0b11011011
+  
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xE5);
 
@@ -78,8 +85,6 @@ void setup()
   // MDMCFG0 - Channel spacing
   cc1101.writeReg(0x14, 0xF8);
 
-  // PKTCTRL0 - Set CRC
-  cc1101.writeReg(0x08, 0x04); // Was 0x00 for no CRC check and fixed packet length
 
   // FREND0 - Select PATABLE index to use when sending a '1'
   cc1101.writeReg(0x22, 0x11);
@@ -121,7 +126,7 @@ void send_data() {
 
   // If you just put numbers i.e. 5,4,3,2,1 they will be taken as HEX so I write it explicitly here.
   
-  byte thing[61] = {0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
+  byte thing[] = {0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
   memcpy(data.data, thing, sizeof(data.data));
    
   // Handy trick to invert bits in python
