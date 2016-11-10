@@ -79,7 +79,7 @@ void setup()
   cc1101.writeReg(0x22, 0x11);
 
   // Set RX only
-  cc1101.setRxState();
+  cc1101.setRxState(); // unnecessary?
   
   delay(1000);
 
