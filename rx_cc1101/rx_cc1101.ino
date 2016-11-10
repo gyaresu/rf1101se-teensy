@@ -57,13 +57,19 @@ void setup()
   cc1101.writeReg(0x09, 0xdb); // 0b11011011 
   cc1101.writeReg(0x09, 0x00);
 
+  // ------ Data rate ------ 
+  // Together these two registers give a data rate of 1394 baud
+  // (page 28)
+  
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
-  cc1101.writeReg(0x10, 0xE5);
+  cc1101.writeReg(0x10, 0xC5);
 
   // MDMCFG3 - Data Rate
   // DRATE = 1000000.0 * MHZ * (256+drate_m) * powf(2,drate_e) / powf(2,28);
-  cc1101.writeReg(0x11, 0xC3);
+  cc1101.writeReg(0x11, 0xE7);
 
+  // -----------------------
+  
   // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode
   // 00110010 - DC blocking enabled, OOK/ASK, No manchester, 16/16 syncword bits detected
   cc1101.writeReg(0x12, 0x32); // was 0x30
@@ -95,11 +101,11 @@ void setup()
   Serial.print("PKTCTRL0: Data whitening / Packet format / CRC Check / Packet length - ");
   Serial.println(cc1101.readReg(0x08, CC1101_CONFIG_REGISTER));
   Serial.print("MDMCFG4: Channel BW - ");
-  Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER));
+  Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG3: Data Rate (Baud) - ");
-  Serial.println(cc1101.readReg(0x11, CC1101_CONFIG_REGISTER));
+  Serial.println(cc1101.readReg(0x11, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode - ");
-  Serial.println(cc1101.readReg(0x12, CC1101_CONFIG_REGISTER));
+  Serial.println(cc1101.readReg(0x12, CC1101_CONFIG_REGISTER), HEX);
   Serial.println("device initialized");
 
   // You can set an interupt or poll on GDO0, pin 2 (page 35)
@@ -113,6 +119,8 @@ void isr()
   Serial.println("Interrupt triggered.");
     
     CCPACKET p;
+    Serial.println(p.length);
+    Serial.println(p.data[1], HEX);
     
     if (cc1101.receiveData(&p) > 0) {
       if (p.length > 0) {
@@ -128,8 +136,8 @@ void isr()
 
 void loop()
 {
-  Serial.println("Waiting for packets to interrupt...");
-  delay(2000);
+  Serial.println("Delay main loop to show how packets interrupt...");
+  delay(1000000);
 }
 
 
