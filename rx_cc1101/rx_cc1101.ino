@@ -48,13 +48,14 @@ void setup()
   // cc1101.enableAddressCheck();
   
   // PKTCTRL1 - Packet Automation Control
-  cc1101.writeReg(0x07, 0x04); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
+  // Setting PQT to '3' 
+  cc1101.writeReg(0x07, 0x05); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
 
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x07);
 
   // ADDR - Device Address
-  cc1101.writeReg(0x09, 0xdb); // 0b11011011 
+  //cc1101.writeReg(0x09, 0xdb); // 0b11011011 
   cc1101.writeReg(0x09, 0x00);
 
   // ------ Data rate ------ 
@@ -109,6 +110,8 @@ void setup()
   Serial.println("device initialized");
 
   // You can set an interupt or poll on GDO0, pin 2 (page 35)
+  // If you get an error (digitalPinToInterrupt is not declared in this scope)
+  // Then you can set the interrupt number manually with just a '0'
   attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
 }
 
