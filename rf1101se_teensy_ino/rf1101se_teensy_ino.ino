@@ -62,13 +62,13 @@ void setup()
   cc1101.writeReg(0x06, 0x08);
   
   // PKTCTRL1 - Packet Automation Control
-  cc1101.writeReg(0x07, 0x04);
+  cc1101.writeReg(0x07, 0x06); // Enable packet filtering and status bytes
   
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x00); // 0x00 for no CRC check and fixed packet length
   
   // ADDR - Device Address
-  cc1101.writeReg(0x09, 0x00); // 0b11011011
+  cc1101.writeReg(0x09, 0xbd); // 0b11011011
   
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xE5);
