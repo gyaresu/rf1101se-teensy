@@ -49,8 +49,8 @@ void setup()
   Serial.begin(9600);
 
   // SyncWord
-  uint8_t syncH = 0xEE; // 11101110 twice gives you a sync word of 1110111011101110
-  uint8_t syncL = 0xEE;
+  uint8_t syncH = 0xBB; // 11101110 twice gives you a sync word of 1110111011101110
+  uint8_t syncL = 0xBB;
 
   // Initialize the CC Chip
   cc1101.init();
@@ -59,7 +59,7 @@ void setup()
   cc1101.setCarrierFreq(CFREQ_433);
   
   // PKTLEN
-  cc1101.writeReg(0x06, 0x08);
+  cc1101.writeReg(0x06, 0x0a);
   
   // PKTCTRL1 - Packet Automation Control
   cc1101.writeReg(0x07, 0x06); // Enable packet filtering and status bytes
@@ -125,7 +125,7 @@ void send_data() {
 
   CCPACKET data;
 
-  byte thing[] = {0xdb, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
+  byte thing[10] = {0x0a, 0xaf, 0x64, 0x65, 0x61, 0xaa, 0x62, 0x65, 0x65, 0x66};
   
   memcpy(data.data, thing, sizeof(data.data));
   

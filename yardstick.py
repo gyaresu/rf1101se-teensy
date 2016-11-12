@@ -7,7 +7,7 @@ def init(d):
     d.setMdmSyncMode(0x02)
     d.setMdmSyncWord(0xEEEE)
     d.setMdmDRate(1394)
-    d.makePktFLEN(8)
+    d.makePktFLEN(10)
     d.setMdmNumPreamble(0)
     d.setPktPQT(3)
     d.setMaxPower()
