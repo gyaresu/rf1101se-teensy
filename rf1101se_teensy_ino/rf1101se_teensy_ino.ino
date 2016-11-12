@@ -62,13 +62,13 @@ void setup()
   cc1101.writeReg(0x06, 0x08);
   
   // PKTCTRL1 - Packet Automation Control
-  cc1101.writeReg(0x07, 0x07);
+  cc1101.writeReg(0x07, 0x04);
   
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x00); // 0x00 for no CRC check and fixed packet length
   
   // ADDR - Device Address
-  cc1101.writeReg(0x09, 0xDB); // 0b11011011
+  cc1101.writeReg(0x09, 0x00); // 0b11011011
   
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xE5);
@@ -125,7 +125,7 @@ void send_data() {
 
   CCPACKET data;
 
-  byte thing[] = {0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
+  byte thing[] = {0xdb, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
   
   memcpy(data.data, thing, sizeof(data.data));
   

@@ -49,14 +49,14 @@ void setup()
   
   // PKTCTRL1 - Packet Automation Control
   // Setting PQT to '3' 
-  cc1101.writeReg(0x07, 0x05); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
+  cc1101.writeReg(0x07, 0x06); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
 
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x07);
 
   // ADDR - Device Address
-  //cc1101.writeReg(0x09, 0xdb); // 0b11011011 
-  cc1101.writeReg(0x09, 0x00);
+  cc1101.writeReg(0x09, 0xdb); // 0b11011011 
+  //cc1101.writeReg(0x09, 0x00); // address check disabled
 
   // ------ Data rate ------ 
   // Together these two registers give a data rate of 1394 baud
