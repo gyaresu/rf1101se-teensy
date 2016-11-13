@@ -49,8 +49,8 @@ void setup()
   Serial.begin(9600);
 
   // SyncWord
-  uint8_t syncH = 0xBB; // 11101110 twice gives you a sync word of 1110111011101110
-  uint8_t syncL = 0xBB;
+  uint8_t syncH = 0xEE; // 11101110 twice gives you a sync word of 1110111011101110
+  uint8_t syncL = 0xEE;
 
   // Initialize the CC Chip
   cc1101.init();
@@ -58,7 +58,7 @@ void setup()
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
   
-  // PKTLEN
+  // PKTLEN - Payload minus the data length byte
   cc1101.writeReg(0x06, 0x0a);
   
   // PKTCTRL1 - Packet Automation Control
@@ -67,8 +67,8 @@ void setup()
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x00); // 0x00 for no CRC check and fixed packet length
   
-  // ADDR - Device Address
-  cc1101.writeReg(0x09, 0xbd); // 0b11011011
+  // ADDR - An arbitrary address used to filter out messages intended for this radio
+  cc1101.writeReg(0x09, 0xbd);
   
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xE5);
@@ -125,7 +125,7 @@ void send_data() {
 
   CCPACKET data;
 
-  byte thing[10] = {0x0a, 0xaf, 0x64, 0x65, 0x61, 0xaa, 0x62, 0x65, 0x65, 0x66};
+  byte thing[10] = {0x09, 0xdb, 0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
   
   memcpy(data.data, thing, sizeof(data.data));
   
