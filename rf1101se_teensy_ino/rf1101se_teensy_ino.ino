@@ -58,8 +58,8 @@ void setup()
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
   
-  // PKTLEN - Payload minus the data length byte
-  cc1101.writeReg(0x06, 0x0a);
+  // PKTLEN - (includes length byte)
+  cc1101.writeReg(0x06, 0x10);
   
   // PKTCTRL1 - Packet Automation Control
   cc1101.writeReg(0x07, 0x06); // Enable packet filtering and status bytes
@@ -125,7 +125,7 @@ void send_data() {
 
   CCPACKET data;
 
-  byte thing[10] = {0x09, 0xdb, 0x64, 0x65, 0x61, 0x64, 0x62, 0x65, 0x65, 0x66};
+  byte thing[10] = {0x09, 0xdb, 0x62, 0x65, 0x65, 0x66, 0x64, 0x65, 0x61, 0x64};
   
   memcpy(data.data, thing, sizeof(data.data));
   

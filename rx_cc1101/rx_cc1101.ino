@@ -28,6 +28,7 @@ void setup()
 {
   Serial.begin(9600);
 
+
   // SyncWord
   uint8_t syncH = 0xEE; // 11101110 twice gives you a sync word of 1110111011101110
   uint8_t syncL = 0xEE;
@@ -38,8 +39,8 @@ void setup()
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
 
-  // PKTLEN - Packet Length
-  cc1101.writeReg(0x06, 0x08); // 8 bytes of payload(?)
+  // PKTLEN - (includes length byte)
+  cc1101.writeReg(0x06, 0x10);
 
   // Address checking will enable us to speak only to specific devices
   // PKTCTRL1 (page 67) enables the 'address check'.
@@ -52,10 +53,10 @@ void setup()
   cc1101.writeReg(0x07, 0x06); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
 
   // PKTCTRL0 - Packet Automation Control
-  cc1101.writeReg(0x08, 0x07);
+  cc1101.writeReg(0x08, 0x00); // 00000001
 
   // ADDR - Device Address
-  cc1101.writeReg(0x09, 0xdb); // 0b11011011 
+  cc1101.writeReg(0x09, 0xdb); // 0b11011011
   //cc1101.writeReg(0x09, 0x00); // address check disabled
 
   // ------ Data rate ------ 
@@ -97,15 +98,19 @@ void setup()
   Serial.println(cc1101.readReg(CC1101_VERSION, CC1101_STATUS_REGISTER));
   Serial.print("CC1101_MARCSTATE ");
   Serial.println(cc1101.readReg(CC1101_MARCSTATE, CC1101_STATUS_REGISTER) & 0x1f);
-  Serial.print("PKTCTRL1: PQT / RSSI, LQI & CRC OK - ");
-  Serial.println(cc1101.readReg(0x07, CC1101_CONFIG_REGISTER));
+  Serial.print("PKTLEN: Fixed = Packet Length; Variable = Maximum allowed. — 0x");
+  Serial.println(cc1101.readReg(0x06, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("PKTCTRL1: PQT / RSSI, LQI / Address Check / CRC OK - 0x");
+  Serial.println(cc1101.readReg(0x07, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("PKTCTRL0: Data whitening / Packet format / CRC Check / Packet length - ");
   Serial.println(cc1101.readReg(0x08, CC1101_CONFIG_REGISTER));
-  Serial.print("MDMCFG4: Channel BW - ");
+  Serial.print("ADDR - Device Address: 0x");
+  Serial.println(cc1101.readReg(0x09, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("MDMCFG4: Channel BW - 0x");
   Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER), HEX);
-  Serial.print("MDMCFG3: Data Rate (Baud) - ");
+  Serial.print("MDMCFG3: Data Rate (Baud) - 0x");
   Serial.println(cc1101.readReg(0x11, CC1101_CONFIG_REGISTER), HEX);
-  Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode - ");
+  Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode - 0x");
   Serial.println(cc1101.readReg(0x12, CC1101_CONFIG_REGISTER), HEX);
   Serial.println("device initialized");
 
@@ -120,27 +125,31 @@ void setup()
 void isr()
 {
   Serial.println("Interrupt triggered.");
-    
-    CCPACKET p;
-    Serial.println(p.length);
-    Serial.println(p.data[1], HEX);
-    
-    if (cc1101.receiveData(&p) > 0) {
-      if (p.length > 0) {
-        Serial.print("Packet length: ");
-        Serial.println(p.length);
-        
-        for (int i = 0; i < p.length; i++) {
-          Serial.print(p.data[i], HEX);
-        }
+  
+  // Disable wireless reception interrupt
+  detachInterrupt(0);
+  
+  CCPACKET p;
+  Serial.println(p.length);
+  Serial.println(p.data[1], HEX);
+  
+  if (cc1101.receiveData(&p) > 0) {
+    if (p.length > 0) {
+      Serial.print("Packet length: ");
+      Serial.println(p.length);
+      
+      for (int i = 0; i < p.length; i++) {
+        Serial.print(p.data[i], HEX);
       }
     }
+  }
+  attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
 }
 
 void loop()
 {
   Serial.println("Delay main loop to show how packets interrupt...");
-  delay(1000000);
+  delay(8000);
 }
 
 
