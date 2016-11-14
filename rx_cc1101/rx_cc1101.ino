@@ -20,6 +20,9 @@ SPI spi;
  *  VCC
  */
 
+volatile bool trigger = false;
+
+
 // SETUP HERE
 
 
@@ -40,20 +43,24 @@ void setup()
   cc1101.setCarrierFreq(CFREQ_433);
 
   // PKTLEN - (includes length byte)
-  cc1101.writeReg(0x06, 0x10);
+  // If PKTCTRL0.LENGTH_CONFIG is fixed then this is packet length
+  // In variable mode this is the maximum packet length and
+  // the first byte of the payload will defines the packet length
+  cc1101.writeReg(0x06, 0x14); // Packet length of 20 bytes
 
   // Address checking will enable us to speak only to specific devices
-  // PKTCTRL1 (page 67) enables the 'address check'.
+  // PKTCTRL1 (page 66) enables the 'address check'.
   // The library has shorthands instead of writing directly to the register
   // cc1101.disableAddressCheck();
   // cc1101.enableAddressCheck();
   
   // PKTCTRL1 - Packet Automation Control
-  // Setting PQT to '3' 
-  cc1101.writeReg(0x07, 0x06); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
-
+  // Setting PQT to '3', enabling status, and checking address plus broadcast
+  cc1101.writeReg(0x07, 0x66); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
+  cc1101.disableAddressCheck(); // test
+  
   // PKTCTRL0 - Packet Automation Control
-  cc1101.writeReg(0x08, 0x00); // 00000001
+  cc1101.writeReg(0x08, 0x01); // 00000001
 
   // ADDR - Device Address
   cc1101.writeReg(0x09, 0xdb); // 0b11011011
@@ -78,16 +85,16 @@ void setup()
 
   // MDMCFG1 - FEC / preamble
   // 00000010 - No FEC, 2 bytes of preamble, reserved, two bit exponent of channel spacing
-  cc1101.writeReg(0x13, 0x02); // Changed from 0x22
+  cc1101.writeReg(0x13, 0x03);
 
   // MDMCFG0 - Channel spacing
-  cc1101.writeReg(0x14, 0xF8);
+  cc1101.writeReg(0x14, 0x11); // Changed from 0xF8 2016-11-14
 
   // FREND0 - Select PATABLE index to use when sending a '1'
   cc1101.writeReg(0x22, 0x11);
 
   // Set RX only
-  cc1101.setRxState(); // unnecessary?
+  //cc1101.setRxState(); // unnecessary?
   
   delay(1000);
 
@@ -102,8 +109,8 @@ void setup()
   Serial.println(cc1101.readReg(0x06, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("PKTCTRL1: PQT / RSSI, LQI / Address Check / CRC OK - 0x");
   Serial.println(cc1101.readReg(0x07, CC1101_CONFIG_REGISTER), HEX);
-  Serial.print("PKTCTRL0: Data whitening / Packet format / CRC Check / Packet length - ");
-  Serial.println(cc1101.readReg(0x08, CC1101_CONFIG_REGISTER));
+  Serial.print("PKTCTRL0: Data whitening / Packet format / CRC Check / Packet length - 0x");
+  Serial.println(cc1101.readReg(0x08, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("ADDR - Device Address: 0x");
   Serial.println(cc1101.readReg(0x09, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG4: Channel BW - 0x");
@@ -120,37 +127,84 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
 }
 
+void ReadLQI()
+{
+  byte lqi = 0;
+  byte value = 0;
+  lqi = (cc1101.readReg(CC1101_LQI, CC1101_STATUS_REGISTER));
+  value = 0x3F - (lqi & 0x3F);
+  Serial.print("CC1101_LQI ");
+  Serial.println(value);
+}
 
+void ReadRSSI()
+{
+  byte rssi = 0;
+  byte value = 0;
+
+  rssi = (cc1101.readReg(CC1101_RSSI, CC1101_STATUS_REGISTER));
+
+  if (rssi >= 128)
+  {
+    value = 255 - rssi;
+    value /= 2;
+    value += 74;
+  }
+  else
+  {
+    value = rssi / 2;
+    value += 74;
+  }
+  Serial.print("CC1101_RSSI ");
+  Serial.println(value);
+}
 
 void isr()
 {
   Serial.println("Interrupt triggered.");
-  
-  // Disable wireless reception interrupt
-  detachInterrupt(0);
-  
-  CCPACKET p;
-  Serial.println(p.length);
-  Serial.println(p.data[1], HEX);
-  
-  if (cc1101.receiveData(&p) > 0) {
-    if (p.length > 0) {
-      Serial.print("Packet length: ");
-      Serial.println(p.length);
-      
-      for (int i = 0; i < p.length; i++) {
-        Serial.print(p.data[i], HEX);
-      }
-    }
-  }
-  attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
+  trigger = true;
 }
 
 void loop()
 {
-  Serial.println("Delay main loop to show how packets interrupt...");
-  delay(8000);
-}
+  if (trigger) {
+    Serial.println("packet received");
+    // Disable wireless reception interrupt
+    detachInterrupt(0);
 
+    ReadRSSI();
+    ReadLQI();
+    // clear the flag
+    trigger = false;
+
+    CCPACKET packet;
+
+    if (cc1101.receiveData(&packet) > 0) {
+      if (!packet.crc_ok) {
+        Serial.println("crc not ok");
+      }
+
+      /*if (packet.length > 0) {
+        Serial.print("packet: len ");
+        Serial.print(packet.length);
+        Serial.print(" data: ");
+        for (int j = 0; j < packet.length; j++) {
+          Serial.print(packet.data[j], HEX);
+          Serial.print(" ");
+        }
+        Serial.println(".");
+      }
+      */
+      for (int j = 0; j < 10; j++) {
+          Serial.print(packet.data[j], HEX);
+          Serial.print(" ");
+      }
+    } else {
+      Serial.println("No packet length?");
+    }
+    // Enable wireless reception interrupt
+    attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
+  }
+}
 
 
