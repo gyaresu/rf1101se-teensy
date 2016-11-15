@@ -22,11 +22,7 @@ SPI spi;
 
 volatile bool trigger = false;
 
-
 // SETUP HERE
-
-
-
 void setup()
 {
   Serial.begin(9600);
@@ -42,11 +38,7 @@ void setup()
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
 
-  // PKTLEN - (includes length byte)
-  // If PKTCTRL0.LENGTH_CONFIG is fixed then this is packet length
-  // In variable mode this is the maximum packet length and
-  // the first byte of the payload will defines the packet length
-  cc1101.writeReg(0x06, 0x14); // Packet length of 20 bytes
+
 
   // Address checking will enable us to speak only to specific devices
   // PKTCTRL1 (page 66) enables the 'address check'.
@@ -54,16 +46,26 @@ void setup()
   // cc1101.disableAddressCheck();
   // cc1101.enableAddressCheck();
   
+  // IOCFG0 - GDOx Signal Selection (x = 0, 1, or 2)
+  cc1101.writeReg(0x02,0x08);
+  Serial.println(cc1101.readReg(0x00, CC1101_CONFIG_REGISTER));
+  Serial.println(cc1101.readReg(0x01, CC1101_CONFIG_REGISTER));
+  Serial.println(cc1101.readReg(0x02, CC1101_CONFIG_REGISTER));
+
+  // PKTLEN - (includes length byte)
+  // If PKTCTRL0.LENGTH_CONFIG is fixed then this is packet length
+  // Variable Mode packet length defined by first byte after sync word
+  cc1101.writeReg(0x06, 0x14); // Packet length of 20 bytes
+  
   // PKTCTRL1 - Packet Automation Control
-  // Setting PQT to '3', enabling status, and checking address plus broadcast
+  // 0x66 Setting PQT to '3', enabling status, and checking address plus broadcast
   cc1101.writeReg(0x07, 0x66); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
-  cc1101.disableAddressCheck(); // test
   
   // PKTCTRL0 - Packet Automation Control
-  cc1101.writeReg(0x08, 0x01); // 00000001
+  cc1101.writeReg(0x08, 0x01); // 00000001 // Synchronous serial mode 0x11 (PKT_FORMAT)
 
   // ADDR - Device Address
-  cc1101.writeReg(0x09, 0xdb); // 0b11011011
+  cc1101.writeReg(0x09, 0xDB); // 0b11011011
   //cc1101.writeReg(0x09, 0x00); // address check disabled
 
   // ------ Data rate ------ 
@@ -88,13 +90,13 @@ void setup()
   cc1101.writeReg(0x13, 0x03);
 
   // MDMCFG0 - Channel spacing
-  cc1101.writeReg(0x14, 0x11); // Changed from 0xF8 2016-11-14
+  cc1101.writeReg(0x14, 0x11); // Changed from 0xF8 2016-11-14 to 0x11
 
   // FREND0 - Select PATABLE index to use when sending a '1'
   cc1101.writeReg(0x22, 0x11);
 
-  // Set RX only
-  //cc1101.setRxState(); // unnecessary?
+  // Start receiving
+  cc1101.setRxState();
   
   delay(1000);
 
@@ -168,9 +170,9 @@ void isr()
 void loop()
 {
   if (trigger) {
-    Serial.println("packet received");
+    //Serial.println("packet received");
     // Disable wireless reception interrupt
-    detachInterrupt(0);
+    detachInterrupt(digitalPinToInterrupt(2));
 
     ReadRSSI();
     ReadLQI();
@@ -180,11 +182,13 @@ void loop()
     CCPACKET packet;
 
     if (cc1101.receiveData(&packet) > 0) {
+      /*
       if (!packet.crc_ok) {
         Serial.println("crc not ok");
       }
+      */
 
-      /*if (packet.length > 0) {
+      if (packet.length > 0) {
         Serial.print("packet: len ");
         Serial.print(packet.length);
         Serial.print(" data: ");
@@ -194,13 +198,9 @@ void loop()
         }
         Serial.println(".");
       }
-      */
-      for (int j = 0; j < 10; j++) {
-          Serial.print(packet.data[j], HEX);
-          Serial.print(" ");
-      }
     } else {
       Serial.println("No packet length?");
+      Serial.println("");
     }
     // Enable wireless reception interrupt
     attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);

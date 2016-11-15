@@ -12,7 +12,7 @@ def init(d):
     # Packet length from TX is payload minus length byte
     d.setPktAddr(0xdb)
     d.setMdmNumPreamble(0)
-    d.setPktPQT(3)
+    #d.setPktPQT(3)
     d.setMaxPower()
 
 
