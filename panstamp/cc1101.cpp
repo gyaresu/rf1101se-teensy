@@ -19,6 +19,7 @@
  * USA
  * 
  * Author: Daniel Berenguer
+ * receiveData fixes: Samy Kamkar
  * Creation date: 03/03/2011
  */
 
@@ -527,13 +528,21 @@ boolean CC1101::sendData(CCPACKET packet)
 byte CC1101::receiveData(CCPACKET * packet)
 {
   byte val;
-  byte rxBytes = readStatusReg(CC1101_RXBYTES);
+  byte rxbytes = readStatusReg(CC1101_RXBYTES);
 
-  // Any byte waiting to be read and no overflow?
-  if (rxBytes & 0x7F && !(rxBytes & 0x80))
+  // Rx FIFO overflow?
+  if (getMarcstate() == 0x11)
+  {
+    setIdleState();       // Enter IDLE state
+    flushRxFifo();        // Flush Rx FIFO
+    packet->length = 0;
+  }
+  // Any byte waiting to be read?
+  else if (rxbytes & 0x7F)
   {
     // Read data length
-    packet->length = readConfigReg(CC1101_RXFIFO);
+    packet->length = readStatusReg(CC1101_RXBYTES) & 0x7F;
+
     // If packet is too long
     if (packet->length > CC1101_DATA_LEN)
       packet->length = 0;   // Discard packet
@@ -548,17 +557,15 @@ byte CC1101::receiveData(CCPACKET * packet)
       packet->lqi = val & 0x7F;
       packet->crc_ok = bitRead(val, 7);
     }
+
+    // empty fifo here
+    flushRxFifo();
   }
   else
     packet->length = 0;
-
-  setIdleState();       // Enter IDLE state
-  flushRxFifo();        // Flush Rx FIFO
-  //cmdStrobe(CC1101_SCAL);
 
   // Back to RX state
   setRxState();
 
   return packet->length;
 }
-
