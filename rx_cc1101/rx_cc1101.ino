@@ -9,16 +9,16 @@ SPI spi;
 // Texas Instruments CC1101 reference
 // http://www.ti.com/lit/ds/symlink/cc1101.pdf (pdf)
 
-/* 
- *  Pins require 7 wires.
- *  MOSI: 11
- *  MISO: 12
- *  CSN: 10
- *  SCK: 13
- *  GDO0: 2
- *  GND 
- *  VCC
- */
+/*
+    Pins require 7 wires.
+    MOSI: 11
+    MISO: 12
+    CSN: 10
+    SCK: 13
+    GDO0: 2
+    GND
+    VCC
+*/
 
 volatile bool trigger = false;
 
@@ -45,9 +45,9 @@ void setup()
   // The library has shorthands instead of writing directly to the register
   // cc1101.disableAddressCheck();
   // cc1101.enableAddressCheck();
-  
+
   // IOCFG0 - GDOx Signal Selection (x = 0, 1, or 2)
-  cc1101.writeReg(0x02,0x08);
+  cc1101.writeReg(0x02, 0x08);
   Serial.println(cc1101.readReg(0x00, CC1101_CONFIG_REGISTER));
   Serial.println(cc1101.readReg(0x01, CC1101_CONFIG_REGISTER));
   Serial.println(cc1101.readReg(0x02, CC1101_CONFIG_REGISTER));
@@ -56,11 +56,11 @@ void setup()
   // If PKTCTRL0.LENGTH_CONFIG is fixed then this is packet length
   // Variable Mode packet length defined by first byte after sync word
   cc1101.writeReg(0x06, 0x14); // Packet length of 20 bytes
-  
+
   // PKTCTRL1 - Packet Automation Control
   // 0x66 Setting PQT to '3', enabling status, and checking address plus broadcast
   cc1101.writeReg(0x07, 0x66); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
-  
+
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x01); // 00000001 // Synchronous serial mode 0x11 (PKT_FORMAT)
 
@@ -68,10 +68,10 @@ void setup()
   cc1101.writeReg(0x09, 0xDB); // 0b11011011
   //cc1101.writeReg(0x09, 0x00); // address check disabled
 
-  // ------ Data rate ------ 
+  // ------ Data rate ------
   // Together these two registers give a data rate of 1394 baud
   // (page 28)
-  
+
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
   cc1101.writeReg(0x10, 0xC5);
 
@@ -80,7 +80,7 @@ void setup()
   cc1101.writeReg(0x11, 0xE7);
 
   // -----------------------
-  
+
   // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode
   // 00110010 - DC blocking enabled, OOK/ASK, No manchester, 16/16 syncword bits detected
   cc1101.writeReg(0x12, 0x32); // was 0x30
@@ -97,7 +97,7 @@ void setup()
 
   // Start receiving
   cc1101.setRxState();
-  
+
   delay(1000);
 
   Serial.println("Radio initialising\n");
@@ -173,35 +173,24 @@ void loop()
     //Serial.println("packet received");
     // Disable wireless reception interrupt
     detachInterrupt(digitalPinToInterrupt(2));
+    CCPACKET packet;
 
-    ReadRSSI();
-    ReadLQI();
     // clear the flag
     trigger = false;
 
-    CCPACKET packet;
-
     if (cc1101.receiveData(&packet) > 0) {
-      /*
-      if (!packet.crc_ok) {
-        Serial.println("crc not ok");
+      ReadRSSI();
+      ReadLQI();
+      Serial.print("packet: len ");
+      Serial.print(packet.length);
+      Serial.print(" data: ");
+      for (int j = 0; j < packet.length; j++) {
+        Serial.print(packet.data[j], HEX);
+        Serial.print(" ");
       }
-      */
-
-      if (packet.length > 0) {
-        Serial.print("packet: len ");
-        Serial.print(packet.length);
-        Serial.print(" data: ");
-        for (int j = 0; j < packet.length; j++) {
-          Serial.print(packet.data[j], HEX);
-          Serial.print(" ");
-        }
-        Serial.println(".");
-      }
-    } else {
-      Serial.println("No packet length?");
-      Serial.println("");
+      Serial.println(".");
     }
+
     // Enable wireless reception interrupt
     attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
   }
