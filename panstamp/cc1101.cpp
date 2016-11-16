@@ -41,6 +41,12 @@
 #define wait_GDO0_high()  while(!getGDO0state())
 // Wait until GDO0 line goes low
 #define wait_GDO0_low()  while(getGDO0state())
+// Read CC1101 Config register
+#define readConfigReg(regAddr)    readReg(regAddr, CC1101_CONFIG_REGISTER)
+// Read CC1101 Status register
+#define readStatusReg(regAddr)    readReg(regAddr, CC1101_STATUS_REGISTER)
+// Get Marcstate
+#define getMarcstate() (readStatusReg(CC1101_MARCSTATE) & 0x1F)
 
  /**
   * PATABLE
