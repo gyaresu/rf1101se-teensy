@@ -18,6 +18,7 @@ CC1101 cc1101;
     VCC
 */
 
+// Global variable to trigger GDO0 activity
 volatile bool trigger = false;
 
 // SETUP HERE
@@ -37,10 +38,10 @@ void setup()
 
   // IOCFG0 - GDOx Signal Selection (x = 0, 1, or 2)
   cc1101.writeReg(0x02, 0x08);
-  Serial.println(cc1101.readReg(0x00, CC1101_CONFIG_REGISTER));
-  Serial.println(cc1101.readReg(0x01, CC1101_CONFIG_REGISTER));
-  Serial.println(cc1101.readReg(0x02, CC1101_CONFIG_REGISTER));
-
+  
+  // FIFOTHR - RX FIFO and TX FIFO Thresholds
+  cc1101.writeReg(0x03, 0x02);
+    
   // PKTLEN - (includes length byte)
   // If PKTCTRL0.LENGTH_CONFIG is fixed then this is packet length
   // Variable Mode packet length defined by first byte after sync word
@@ -51,21 +52,20 @@ void setup()
   cc1101.writeReg(0x07, 0x66); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
 
   // PKTCTRL0 - Packet Automation Control
-  cc1101.writeReg(0x08, 0x01); // 00000001 // Synchronous serial mode 0x11 (PKT_FORMAT)
+  cc1101.writeReg(0x08, 0x01); // Synchronous serial mode 0x11 (PKT_FORMAT)
 
   // ADDR - Device Address
-  cc1101.writeReg(0x09, 0xDB); // 0b11011011
-  //cc1101.writeReg(0x09, 0x00); // address check disabled
+  cc1101.writeReg(0x09, 0xDB); // 0x00 to disable 
 
   // CHANNR - Channel Number
   cc1101.writeReg(0x0A, 0x00); // 0x00 is default
 
   // FSCTRL1 - Frequency Synthesizer Control
   // *note* rf1101se uses a 26MHz crystal
-  cc1101.writeReg(0x0B, 0x0F); // 0x0F is default
+  cc1101.writeReg(0x0B, 0x0C); // 0x0F is default
   
   // FSCTRL0 - Frequency Synthesizer Control
-  //cc1101.writeReg(0x0C, 0x00); // 0x00 is default
+  cc1101.writeReg(0x0C, 0x00); // 0x00 is default
   
   // ------ Data rate ------
   // Together these two registers give a data rate of 1394 baud
@@ -99,12 +99,24 @@ void setup()
 
   delay(1000);
   Serial.println("Radio initialising\n");
-  Serial.print("CC1101_PARTNUM ");
-  Serial.println(cc1101.readReg(CC1101_PARTNUM, CC1101_STATUS_REGISTER));
-  Serial.print("CC1101_VERSION ");
-  Serial.println(cc1101.readReg(CC1101_VERSION, CC1101_STATUS_REGISTER));
-  Serial.print("CC1101_MARCSTATE ");
-  Serial.println(cc1101.readReg(CC1101_MARCSTATE, CC1101_STATUS_REGISTER) & 0x1f);
+  Serial.print("CC1101_PARTNUM");
+  Serial.println(cc1101.readReg(CC1101_PARTNUM, CC1101_STATUS_REGISTER & 0xF0));
+  Serial.print("CC1101_VERSION - 0x");
+  Serial.println(cc1101.readReg(CC1101_VERSION, CC1101_STATUS_REGISTER), HEX);
+  Serial.print("CC1101_MARCSTATE - 0x");
+  Serial.println(cc1101.readReg(CC1101_MARCSTATE, CC1101_STATUS_REGISTER) & 0x1F, HEX);
+  Serial.print("IOCFG2: GDO2 Output Pin Configuration - 0x");
+  Serial.println(cc1101.readReg(0x00, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("IOCFG1: GDO1 Output Pin Configuration - 0x");
+  Serial.println(cc1101.readReg(0x01, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("IOCFG0: GDO0 Output Pin Configuration - 0x");
+  Serial.println(cc1101.readReg(0x02, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("FIFOTHR - RX FIFO and TX FIFO Thresholds - 0x");
+  Serial.println(cc1101.readReg(0x03, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("SYNC1: Sync Word High Byte - 0x");
+  Serial.println(cc1101.readReg(0x04, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("SYNC0: Sync Word Low Byte - 0x");
+  Serial.println(cc1101.readReg(0x05, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("PKTLEN: Fixed = Packet Length; Variable = Maximum allowed. — 0x");
   Serial.println(cc1101.readReg(0x06, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("PKTCTRL1: PQT / RSSI, LQI / Address Check / CRC OK - 0x");
