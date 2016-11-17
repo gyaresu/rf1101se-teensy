@@ -4,8 +4,6 @@
 
 CC1101 cc1101;
 
-SPI spi;
-
 // Texas Instruments CC1101 reference
 // http://www.ti.com/lit/ds/symlink/cc1101.pdf (pdf)
 
@@ -27,7 +25,6 @@ void setup()
 {
   Serial.begin(9600);
 
-
   // SyncWord
   uint8_t syncH = 0xEE; // 11101110 twice gives you a sync word of 1110111011101110
   uint8_t syncL = 0xEE;
@@ -37,14 +34,6 @@ void setup()
 
   cc1101.setSyncWord(syncH, syncL, false);
   cc1101.setCarrierFreq(CFREQ_433);
-
-
-
-  // Address checking will enable us to speak only to specific devices
-  // PKTCTRL1 (page 66) enables the 'address check'.
-  // The library has shorthands instead of writing directly to the register
-  // cc1101.disableAddressCheck();
-  // cc1101.enableAddressCheck();
 
   // IOCFG0 - GDOx Signal Selection (x = 0, 1, or 2)
   cc1101.writeReg(0x02, 0x08);
@@ -68,6 +57,16 @@ void setup()
   cc1101.writeReg(0x09, 0xDB); // 0b11011011
   //cc1101.writeReg(0x09, 0x00); // address check disabled
 
+  // CHANNR - Channel Number
+  cc1101.writeReg(0x0A, 0x00); // 0x00 is default
+
+  // FSCTRL1 - Frequency Synthesizer Control
+  // *note* rf1101se uses a 26MHz crystal
+  cc1101.writeReg(0x0B, 0x0F); // 0x0F is default
+  
+  // FSCTRL0 - Frequency Synthesizer Control
+  //cc1101.writeReg(0x0C, 0x00); // 0x00 is default
+  
   // ------ Data rate ------
   // Together these two registers give a data rate of 1394 baud
   // (page 28)
@@ -99,7 +98,6 @@ void setup()
   cc1101.setRxState();
 
   delay(1000);
-
   Serial.println("Radio initialising\n");
   Serial.print("CC1101_PARTNUM ");
   Serial.println(cc1101.readReg(CC1101_PARTNUM, CC1101_STATUS_REGISTER));
@@ -115,6 +113,10 @@ void setup()
   Serial.println(cc1101.readReg(0x08, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("ADDR - Device Address: 0x");
   Serial.println(cc1101.readReg(0x09, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("FSCTRL1: 0x");
+  Serial.println(cc1101.readReg(0x0B, CC1101_CONFIG_REGISTER));
+  Serial.print("FSCTRL0: 0x");
+  Serial.println(cc1101.readReg(0x0C, CC1101_CONFIG_REGISTER));
   Serial.print("MDMCFG4: Channel BW - 0x");
   Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG3: Data Rate (Baud) - 0x");
@@ -122,7 +124,6 @@ void setup()
   Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode - 0x");
   Serial.println(cc1101.readReg(0x12, CC1101_CONFIG_REGISTER), HEX);
   Serial.println("device initialized");
-
   // You can set an interupt or poll on GDO0, pin 2 (page 35)
   // If you get an error (digitalPinToInterrupt is not declared in this scope)
   // Then you can set the interrupt number manually with just a '0'
@@ -195,5 +196,3 @@ void loop()
     attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
   }
 }
-
-
