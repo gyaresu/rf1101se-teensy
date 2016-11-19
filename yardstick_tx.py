@@ -7,13 +7,15 @@ def init(d):
     d.setMdmSyncMode(2)
     d.setMdmSyncWord(0xEEEE)
     d.setMdmDRate(1394)
-    d.makePktVLEN(20)
-    d.setRFRegister(PKTCTRL1, 0x06) # set packet filtering
+    #d.makePktFLEN(10)
+    d.makePktVLEN(61)
+    d.setRFRegister(PKTCTRL1, 0x01) # set packet filtering but no status
+    #d.setRFRegister(PKTCTRL1, 0x06) # set packet filtering
     # Packet length from TX is payload minus length byte
     d.setPktAddr(0xdb)
-    d.setMdmNumPreamble(0)
+    d.setMdmNumPreamble(2)
     #d.setPktPQT(3)
-    d.setMaxPower()
+    #d.setMaxPower()
 
 
     #d.printRadioConfig()

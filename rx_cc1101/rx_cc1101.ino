@@ -21,6 +21,9 @@ CC1101 cc1101;
 // Global variable to trigger GDO0 activity
 volatile bool trigger = false;
 
+// Packet count
+uint32_t count;
+
 // SETUP HERE
 void setup()
 {
@@ -37,7 +40,7 @@ void setup()
   cc1101.setCarrierFreq(CFREQ_433);
 
   // IOCFG0 - GDOx Signal Selection (x = 0, 1, or 2)
-  cc1101.writeReg(0x02, 0x08);
+  cc1101.writeReg(0x02, 0x06);
   
   // FIFOTHR - RX FIFO and TX FIFO Thresholds
   cc1101.writeReg(0x03, 0x02);
@@ -45,11 +48,11 @@ void setup()
   // PKTLEN - (includes length byte)
   // If PKTCTRL0.LENGTH_CONFIG is fixed then this is packet length
   // Variable Mode packet length defined by first byte after sync word
-  cc1101.writeReg(0x06, 0x14); // Packet length of 20 bytes
+  cc1101.writeReg(0x06, 0x3d); // Packet length of 20 bytes
 
   // PKTCTRL1 - Packet Automation Control
   // 0x66 Setting PQT to '3', enabling status, and checking address plus broadcast
-  cc1101.writeReg(0x07, 0x66); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
+  cc1101.writeReg(0x07, 0x04); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
 
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x01); // Synchronous serial mode 0x11 (PKT_FORMAT)
@@ -126,15 +129,23 @@ void setup()
   Serial.print("ADDR - Device Address: 0x");
   Serial.println(cc1101.readReg(0x09, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("FSCTRL1: 0x");
-  Serial.println(cc1101.readReg(0x0B, CC1101_CONFIG_REGISTER));
+  Serial.println(cc1101.readReg(0x0B, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("FSCTRL0: 0x");
-  Serial.println(cc1101.readReg(0x0C, CC1101_CONFIG_REGISTER));
+  Serial.println(cc1101.readReg(0x0C, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG4: Channel BW - 0x");
   Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG3: Data Rate (Baud) - 0x");
   Serial.println(cc1101.readReg(0x11, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG2: Modulation / Manchester / Sync Mode - 0x");
   Serial.println(cc1101.readReg(0x12, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("MDMCFG1: FEC / Num Preamble / Channel Spacing - 0x");
+  Serial.println(cc1101.readReg(0x13, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("MDMCFG0: Mantissa of channel spacing - 0x");
+  Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("FREND1: Front end RX configuration - 0x");
+  Serial.println(cc1101.readReg(0x21, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("FREND0: Front end TX configuration - 0x");
+  Serial.println(cc1101.readReg(0x22, CC1101_CONFIG_REGISTER), HEX);
   Serial.println("device initialized");
   // You can set an interupt or poll on GDO0, pin 2 (page 35)
   // If you get an error (digitalPinToInterrupt is not declared in this scope)
@@ -198,7 +209,9 @@ void loop()
       Serial.print(packet.length);
       Serial.print(" data: ");
       for (int j = 0; j < packet.length; j++) {
-        Serial.print(packet.data[j], HEX);
+        Serial.println(packet.data[j], HEX);
+        Serial.print("Packet count: ");
+        Serial.println(count++);
         Serial.print(" ");
       }
       Serial.println(".");
