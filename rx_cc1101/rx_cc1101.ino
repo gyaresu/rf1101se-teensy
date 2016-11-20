@@ -55,7 +55,7 @@ void setup()
   cc1101.writeReg(0x07, 0x06); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
 
   // PKTCTRL0 - Packet Automation Control
-  cc1101.writeReg(0x08, 0x01); // Synchronous serial mode 0x11 (PKT_FORMAT)
+  cc1101.writeReg(0x08, 0x05); // Synchronous serial mode 0x11 (PKT_FORMAT)
 
   // ADDR - Device Address
   cc1101.writeReg(0x09, 0xDB); // 0x00 to disable 
@@ -211,7 +211,7 @@ void loop()
       Serial.print("packet: len ");
       Serial.println(packet.length);
       Serial.print(" data: ");
-      for (int i = 2; i < packet.length -2; i++) {
+      for (int i = 1; i < packet.length; i++) {
         Serial.write(packet.data[i]);
         if (i == 50) {
         Serial.print(" ");
