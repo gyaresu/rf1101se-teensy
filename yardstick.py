@@ -13,7 +13,7 @@ def init(d):
     #d.makePktFLEN(10)
     d.makePktVLEN(61)
     d.setRFRegister(PKTCTRL1, 0x01) # set packet filtering but no status
-    d.setRFRegister(PKTCTRL0, 0x05)
+    d.setRFRegister(PKTCTRL0, 0x05) # set CRC & variable length
     #d.setRFRegister(PKTCTRL1, 0x06) # set packet filtering
     d.setPktAddr(0xdb)
     d.setMdmNumPreamble(2)
