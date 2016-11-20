@@ -85,8 +85,8 @@ void setup()
 
   // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode
   // 00110010 - DC blocking enabled, OOK/ASK, No manchester, 16/16 syncword bits detected
-  cc1101.writeReg(0x12, 0x32); // was 0x30
-
+  //cc1101.writeReg(0x12, 0x32); // was 0x30
+  cc1101.writeReg(0x12, 0x3a); // dc block, ook/ask, manchester, 16/16
   // MDMCFG1 - FEC / preamble
   // 00000010 - No FEC, 2 bytes of preamble, reserved, two bit exponent of channel spacing
   cc1101.writeReg(0x13, 0x03);
