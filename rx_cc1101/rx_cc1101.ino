@@ -202,22 +202,24 @@ void loop()
     // clear the flag
     trigger = false;
 
+    // Yardstick One command:
+    // d.testTX('\xdb\x48\x69\x20\x50\x75\x6e\x6b')
+    
     if (cc1101.receiveData(&packet) > 0) {
       ReadRSSI();
       ReadLQI();
       Serial.print("packet: len ");
       Serial.println(packet.length);
       Serial.print(" data: ");
-      for (int i = 0; i < packet.length; i++) {
-        //Serial.print("Loop number: ");
-        //Serial.println(i);
-        Serial.print(packet.data[i], HEX);
+      for (int i = 2; i < packet.length -2; i++) {
+        Serial.write(packet.data[i]);
+        if (i == 50) {
         Serial.print(" ");
+        }
       }
       Serial.println("");
       Serial.print("Packet count: ");
       Serial.println(count++);
-      //Serial.println(".");
     }
 
     // Enable wireless reception interrupt
