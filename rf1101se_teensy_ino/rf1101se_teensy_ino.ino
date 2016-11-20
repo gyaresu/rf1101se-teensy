@@ -71,11 +71,11 @@ void setup()
   cc1101.writeReg(0x09, 0xbd);
   
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
-  cc1101.writeReg(0x10, 0xE5);
+  cc1101.writeReg(0x10, 0xc5);
 
   // MDMCFG3 - Data Rate
   // DRATE = 1000000.0 * MHZ * (256+drate_m) * powf(2,drate_e) / powf(2,28);
-  cc1101.writeReg(0x11, 0xC3);
+  cc1101.writeReg(0x11, 0xe7);
 
   // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode
   // 00110010 - DC blocking enabled, OOK/ASK, No manchester, 16/16 syncword bits detected
@@ -83,10 +83,10 @@ void setup()
 
   // MDMCFG1 - FEC / preamble
   // 00000010 - No FEC, 2 bytes of preamble, reserved, two bit exponent of channel spacing
-  cc1101.writeReg(0x13, 0x02); // Changed from 0x22
+  cc1101.writeReg(0x13, 0x03); // Changed from 0x22
 
   // MDMCFG0 - Channel spacing
-  cc1101.writeReg(0x14, 0xF8);
+  cc1101.writeReg(0x14, 0x11);
 
 
   // FREND0 - Select PATABLE index to use when sending a '1'
@@ -125,7 +125,7 @@ void send_data() {
 
   CCPACKET data;
 
-  byte thing[] = {0x09, 0xdb, 0x62, 0x65, 0x65, 0x66, 0x64, 0x65, 0x61, 0x64};
+  byte thing[] = {0xdb, 0x62, 0x65, 0x65, 0x66, 0x64, 0x65, 0x61, 0x64};
   
   memcpy(data.data, thing, sizeof(data.data));
   

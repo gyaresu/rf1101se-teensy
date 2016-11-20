@@ -208,8 +208,10 @@ void loop()
       Serial.print("packet: len ");
       Serial.print(packet.length);
       Serial.print(" data: ");
-      for (int j = 0; j < packet.length; j++) {
-        Serial.println(packet.data[j], HEX);
+      for (int i = 0; i < packet.length; i++) {
+        Serial.print("Loop number: ");
+        Serial.println(i);
+        Serial.println(packet.data[i], HEX);
         Serial.print("Packet count: ");
         Serial.println(count++);
         Serial.print(" ");
