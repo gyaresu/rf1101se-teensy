@@ -5,7 +5,9 @@ import sys
 #hex(ord(d.peek(PKTCTRL1)))
 
 def init(d):
-    d.setMdmModulation(MOD_ASK_OOK)
+    #d.setMdmModulation(MOD_ASK_OOK)
+    d.setMdmModulation(MOD_GFSK)
+    d.setEnableMdmManchester()
     d.setFreq(433000000)
     d.setMdmSyncMode(2)
     d.setMdmSyncWord(0xEEEE)
