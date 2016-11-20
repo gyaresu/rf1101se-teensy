@@ -13,6 +13,7 @@ def init(d):
     #d.makePktFLEN(10)
     d.makePktVLEN(61)
     d.setRFRegister(PKTCTRL1, 0x01) # set packet filtering but no status
+    d.setRFRegister(PKTCTRL0, 0x05)
     #d.setRFRegister(PKTCTRL1, 0x06) # set packet filtering
     d.setPktAddr(0xdb)
     d.setMdmNumPreamble(2)
@@ -21,8 +22,10 @@ def init(d):
 
 
     #d.printRadioConfig()
-    d.RFlisten()
+    #d.RFlisten()
 
 d = RfCat()
 init(d)
+
+# d.testTX('\xdb\x48\x69\x20\x50\x75\x6e\x6b')
 
