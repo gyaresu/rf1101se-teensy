@@ -7,7 +7,7 @@ def init(d):
     d.setMdmSyncMode(2)
     d.setMdmSyncWord(0xEEEE)
     d.setMdmDRate(1394)
-    d.makePktVLEN(20)
+    d.makePktVLEN(61)
     d.setRFRegister(PKTCTRL1, 0x06) # set packet filtering
     # Packet length from TX is payload minus length byte
     d.setPktAddr(0xdb)
