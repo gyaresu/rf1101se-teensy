@@ -52,7 +52,7 @@ void setup()
 
   // PKTCTRL1 - Packet Automation Control
   // 0x66 Setting PQT to '3', enabling status, and checking address plus broadcast
-  cc1101.writeReg(0x07, 0x04); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
+  cc1101.writeReg(0x07, 0x06); // Disabled is 0x04, enabled with broadcast (0x00) is 0x06.
 
   // PKTCTRL0 - Packet Automation Control
   cc1101.writeReg(0x08, 0x01); // Synchronous serial mode 0x11 (PKT_FORMAT)
