@@ -141,7 +141,7 @@ void setup()
   Serial.print("MDMCFG1: FEC / Num Preamble / Channel Spacing - 0x");
   Serial.println(cc1101.readReg(0x13, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG0: Mantissa of channel spacing - 0x");
-  Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER), HEX);
+  Serial.println(cc1101.readReg(0x14, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("FREND1: Front end RX configuration - 0x");
   Serial.println(cc1101.readReg(0x21, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("FREND0: Front end TX configuration - 0x");
@@ -206,17 +206,18 @@ void loop()
       ReadRSSI();
       ReadLQI();
       Serial.print("packet: len ");
-      Serial.print(packet.length);
+      Serial.println(packet.length);
       Serial.print(" data: ");
       for (int i = 0; i < packet.length; i++) {
-        Serial.print("Loop number: ");
-        Serial.println(i);
-        Serial.println(packet.data[i], HEX);
-        Serial.print("Packet count: ");
-        Serial.println(count++);
+        //Serial.print("Loop number: ");
+        //Serial.println(i);
+        Serial.print(packet.data[i], HEX);
         Serial.print(" ");
       }
-      Serial.println(".");
+      Serial.println("");
+      Serial.print("Packet count: ");
+      Serial.println(count++);
+      //Serial.println(".");
     }
 
     // Enable wireless reception interrupt

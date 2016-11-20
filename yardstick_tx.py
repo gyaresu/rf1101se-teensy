@@ -9,7 +9,7 @@ def init(d):
     d.setFreq(433000000)
     d.setMdmSyncMode(2)
     d.setMdmSyncWord(0xEEEE)
-    d.setMdmDRate(1500)
+    d.setMdmDRate(1394)
     #d.makePktFLEN(10)
     d.makePktVLEN(61)
     d.setRFRegister(PKTCTRL1, 0x01) # set packet filtering but no status
