@@ -36,6 +36,9 @@ SPI spi;
  *  VCC
  */
 
+// Packet count
+uint32_t count;
+
 // SETUP HERE
 void setup()
 {
@@ -59,13 +62,13 @@ void setup()
   cc1101.setCarrierFreq(CFREQ_433);
   
   // PKTLEN - (includes length byte)
-  cc1101.writeReg(0x06, 0x10);
+  cc1101.writeReg(0x06, 0x3d);
   
   // PKTCTRL1 - Packet Automation Control
   cc1101.writeReg(0x07, 0x06); // Enable packet filtering and status bytes
   
   // PKTCTRL0 - Packet Automation Control
-  cc1101.writeReg(0x08, 0x00); // 0x00 for no CRC check and fixed packet length
+  cc1101.writeReg(0x08, 0x01); // 0x00 for no CRC check and fixed packet length
   
   // ADDR - An arbitrary address used to filter out messages intended for this radio
   cc1101.writeReg(0x09, 0xbd);
@@ -125,23 +128,26 @@ void send_data() {
 
   CCPACKET data;
 
-  byte thing[] = {0xdb, 0x62, 0x65, 0x65, 0x66, 0x64, 0x65, 0x61, 0x64};
+  //byte thing[] = {0xdb, 0x62, 0x65, 0x65, 0x66, 0x64, 0x65, 0x61, 0x64};
+  byte thing[] = {0x09, 0xdb, 0x48, 0x69, 0x20, 0x50, 0x75, 0x6e, 0x6b};
   
   memcpy(data.data, thing, sizeof(data.data));
   
   data.length = sizeof(thing);
-  Serial.println(data.length);
-
+  
   if (cc1101.sendData(data)) {
     Serial.println("Packet sent ok :)");
     Serial.print("Packet length is: ");
     Serial.print(data.length);
     Serial.println(" bytes.");
     //Serial.print(data.data[0], HEX);
-    for (int i = 0; i < data.length; i++) {
-      Serial.print(data.data[i], HEX);
-      Serial.print(" ");
+    for (int i = 1; i < data.length; i++) {
+      Serial.write(data.data[i]);
+      Serial.print("");
     }
+    Serial.println("");
+    Serial.print("Packet count: ");
+    Serial.println(count++);
   } else {
     Serial.println("sent failed :(");
   }
