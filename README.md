@@ -30,6 +30,13 @@ The example presented currently enables:
  * [Gaussian frequency-shift keying](GFSK)
  * [Manchester encoding](manchester)
  * Address filtering (byte after sync word for specific device selection)
+ 
+### Read The Fine Manual
+I've tried to document what the registers do in the Arduino code.
+You really need to read the manual though to understand what's going on.
+ * http://www.ti.com/lit/ds/symlink/cc1101.pdf
+
+![cc1101 reference manual](/files/spec.png)
 
 ![gfsk manchester](/files/gfsk-manchester.png)
 ![gfsk manchester detailed](/files/gfsk-manchester-preamble.png)
