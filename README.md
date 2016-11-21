@@ -4,7 +4,7 @@ Hi! This is my repo for learning about microcontrollers and packetised radio wit
 
 You're going to want to have at least one (or a dozen) of these really really cheap RF1101SE radio module based on a Texas Instruments CC1101 chip (that's the one with no MCU and no USB, just the radio).
 
-![rf1101 with atmel328 from boldport and FTDI serial adapter](unit)
+![rf1101 with atmel328 from boldport and FTDI serial adapter](/files/unit.png)
 
  * cc1101 — Just the radio
  * cc1110 — radio and [MCU] (Radica IM-ME used in [OpenSesame])
@@ -57,4 +57,3 @@ I include Yardstick One (YS1) code in this repo because I have one. If you don't
 [teensy]: https://www.pjrc.com/teensy/index.html
 [OpenSesame]: http://samy.pl/opensesame/
 [MCU]: https://en.wikipedia.org/wiki/Microcontroller
-[unit]: /files/unit.jpg
