@@ -5,7 +5,8 @@ Hi! This is my repo for learning about microcontrollers and packetised radio wit
 You're going to want to have at least one (or a dozen) of these really really cheap RF1101SE radio module based on a Texas Instruments CC1101 chip (that's the one with no MCU and no USB, just the radio).
 
 ![rf1101 with atmega328 from boldport and FTDI serial adapter](/files/unit.jpg)
-_I'm driving this chip directly from the Atmega328 with 5v... but it really shouldn't work_ ¯\_(ツ)_/¯
+_I'm driving *this* chip directly from the Atmega328 with 5v... but other chips have acted in super weird ways. 
+So now you've been warned(!), it really shouldn't work. YMMV_  ¯\\_(ツ)_/¯
 
  * cc1101 — Just the radio
  * cc1110 — radio and [MCU] (Radica IM-ME used in [OpenSesame])
@@ -45,11 +46,11 @@ I include Yardstick One (YS1) code in this repo because I have one. If you don't
 ### Links to things
  * [Jared Boone's manchester decoding function](https://github.com/jboone/tpms/blob/master/src/bit_coding.py)
  * [YARD Stick One](ys1)
-
- - [Gareth]
+ * [gareth__](twitter) on the twitters
+ * Freenode IRC — gareth__ on #HackRF #RFCat etc.
 
 [SPI]: https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus
-[Gareth]: https://twitter.com/gareth__
+[twitter]: https://twitter.com/gareth__
 [manchester]: https://en.wikipedia.org/wiki/Manchester_code
 [GFSK]: https://en.wikipedia.org/wiki/Frequency-shift_keying#Gaussian_frequency-shift_keying
 [ys1]: http://greatscottgadgets.com/yardstickone/
