@@ -5,12 +5,13 @@ Hi! This is my repo for learning about microcontrollers and packetised radio wit
 You're going to want to have at least one (or a dozen) of these really really cheap RF1101SE radio module based on a Texas Instruments CC1101 chip (that's the one with no MCU and no USB, just the radio).
 
 ![rf1101 with atmega328 from boldport and FTDI serial adapter](/files/unit.jpg)
-_I'm driving *this* chip directly from the Atmega328 with 5v... but other chips have acted in super weird ways. 
+_I'm driving *this* 3.3v chip directly from the Atmega328 with 5v... but other chips have acted in super weird ways. 
 So now you've been warned(!), it really shouldn't work. YMMV_  ¯\\_(ツ)_/¯
 
  * cc1101 — Just the radio
  * cc1110 — radio and [MCU] (Radica IM-ME used in [OpenSesame])
  * cc1111 — radio, mcu, usb (YARD Stick One)
+
 You're also going to want to have a [Teensy](teensy), [Arduino](arduino) or basically any microcontroller that can speak [SPI].
 
 Now all of this works with the Arduino 'whatever' but if you have a 'whatever' then you'll need Logic Converters because "whatever's" do 5V on the digital pins and the Teensy can deal with either 3.3V or 5V because...
