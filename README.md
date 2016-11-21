@@ -18,9 +18,10 @@ Now all of this works with the Arduino 'whatever' but if you have a 'whatever' t
 
 ### Teensy don't care.
 
-Teensy is your basic honey badger of microcontrollers.
+Teensy is your basic honey badger of small inexpensive microcontroller boards.
+It runs a Cortex-M4 which comes with a whole bunch of functionality built right into the chip.
 
-Now the rf1101se-v3.1 is probably only good for 433MHz because the one I have is missing resistors on the circuit board that would enable it to be useful at any other frequencies. So it's not the chip that's at fault, just the cheap board design.
+Please not that the cheap rf1101se-v3.1/whatever radio board you got from Aliexpress is probably only good for 433MHz because they all seems to be missing resistors on the circuit board that would enable it to be useful at any other frequencies. So it's not the chip that's at fault, just the cheap board design.
 
 ### Encode all the things!
 
