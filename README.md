@@ -24,9 +24,9 @@ The example presented currently enables:
  * [Manchester encoding](manchester)
  * Address filtering (byte after sync word for specific device selection)
 
-![gfsk manchester](gfsk01)
-![gfsk manchester detailed](gfsk02)
-![gfsk manchester decoding](gfsk03)
+![gfsk manchester](/files/gfsk-manchester.png)
+![gfsk manchester detailed](/files/gfsk-manchester-preamble.png)
+![gfsk manchester decoding](/files/gfsk-manchester-decoding.png)
 
 ***TODO***
 Move to the default Arduino SPI library.
@@ -42,6 +42,3 @@ I include Yardstick One (YS1) code in this repo because I have one. If you don't
 [Gareth]: https://twitter.com/gareth__
 [manchester]: https://en.wikipedia.org/wiki/Manchester_code
 [GFSK]: https://en.wikipedia.org/wiki/Frequency-shift_keying#Gaussian_frequency-shift_keying
-[gfsk01]: /files/gfsk-manchester.png
-[gfsk02]: /files/gfsk-manchester-preamble.png
-[gfsk03]: /files/gfsk-manchester-decoding.png
