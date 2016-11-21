@@ -1,10 +1,15 @@
 # rf1101se-teensy
 
-Hi! This is working code for a specific couple of devices.
+Hi! This is my repo for learning about microcontrollers and packetised radio with the [CC1101 by Texas Instruments](cc1101) chip driven by 'Arduino-compatible' devices.
 
 You're going to want to have at least one (or a dozen) of these really really cheap RF1101SE radio module based on a Texas Instruments CC1101 chip (that's the one with no MCU and no USB, just the radio).
 
-You're also going to want to have a [Teensy](https://www.pjrc.com/teensy/teensy31.html) or basically any microcontroller that can speak [SPI].
+![rf1101 with atmel328 from boldport and FTDI serial adapter](unit)
+
+ * cc1101 — Just the radio
+ * cc1110 — radio and [MCU] (Radica IM-ME used in [OpenSesame])
+ * cc1111 — radio, mcu, usb (YARD Stick One)
+You're also going to want to have a [Teensy](teensy), [Arduino](arduino) or basically any microcontroller that can speak [SPI].
 
 Now all of this works with the Arduino 'whatever' but if you have a 'whatever' then you'll need Logic Converters because "whatever's" do 5V on the digital pins and the Teensy can deal with either 3.3V or 5V because...
 
@@ -36,9 +41,20 @@ I would like to drive two slave devices (cc1101 chips) with a single microcontro
 
 I include Yardstick One (YS1) code in this repo because I have one. If you don't have one then get one because they're awesome.
 
+### Links to things
+ * [Jared Boone's manchester decoding function](https://github.com/jboone/tpms/blob/master/src/bit_coding.py)
+ * [YARD Stick One](ys1)
+
  - [Gareth]
 
 [SPI]: https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus
 [Gareth]: https://twitter.com/gareth__
 [manchester]: https://en.wikipedia.org/wiki/Manchester_code
 [GFSK]: https://en.wikipedia.org/wiki/Frequency-shift_keying#Gaussian_frequency-shift_keying
+[ys1]: http://greatscottgadgets.com/yardstickone/
+[cc1101]: http://www.ti.com/product/cc1101
+[arduino]: https://www.arduino.cc
+[teensy]: https://www.pjrc.com/teensy/index.html
+[OpenSesame]: http://samy.pl/opensesame/
+[MCU]: https://en.wikipedia.org/wiki/Microcontroller
+[unit]: /files/unit.jpg
