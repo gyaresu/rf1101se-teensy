@@ -4,7 +4,7 @@ Hi! This is my repo for learning about microcontrollers and packetised radio wit
 
 You're going to want to have at least one (or a dozen) of these really really cheap RF1101SE radio module based on a Texas Instruments CC1101 chip (that's the one with no MCU and no USB, just the radio).
 
-![rf1101 with atmel328 from boldport and FTDI serial adapter](/files/unit.png)
+![rf1101 with atmel328 from boldport and FTDI serial adapter](/files/unit.jpg)
 
  * cc1101 — Just the radio
  * cc1110 — radio and [MCU] (Radica IM-ME used in [OpenSesame])
