@@ -69,17 +69,22 @@ void setup()
   
   // FSCTRL0 - Frequency Synthesizer Control
   cc1101.writeReg(0x0C, 0x00); // 0x00 is default
-  
+
+  // FREQ2/1/0
+  cc1101.writeReg(0x0D, 0x12);
+  cc1101.writeReg(0x0E, 0x0a);
+  cc1101.writeReg(0x0F, 0xaa);
+    
   // ------ Data rate ------
   // Together these two registers give a data rate of 1394 baud
   // (page 28)
 
   // MDMCFG4 - channel bandwidth and exponent for calculating data rate
-  cc1101.writeReg(0x10, 0xC5);
+  cc1101.writeReg(0x10, 0xC6);
 
   // MDMCFG3 - Data Rate
   // DRATE = 1000000.0 * MHZ * (256+drate_m) * powf(2,drate_e) / powf(2,28);
-  cc1101.writeReg(0x11, 0xE7);
+  cc1101.writeReg(0x11, 0x06);
 
   // -----------------------
 
@@ -133,6 +138,12 @@ void setup()
   Serial.println(cc1101.readReg(0x0B, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("FSCTRL0: 0x");
   Serial.println(cc1101.readReg(0x0C, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("FREQ2: 0x");
+  Serial.println(cc1101.readReg(0x0D, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("FREQ1: 0x");
+  Serial.println(cc1101.readReg(0x0E, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("FREQ0: 0x");
+  Serial.println(cc1101.readReg(0x0F, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG4: Channel BW - 0x");
   Serial.println(cc1101.readReg(0x10, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG3: Data Rate (Baud) - 0x");
