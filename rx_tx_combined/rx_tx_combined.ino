@@ -91,7 +91,7 @@ void setup()
 
   // FSCTRL1 - Frequency Synthesizer Control
   // *note* rf1101se uses a 26MHz crystal
-  cc1101.writeReg(0x0B, 0x0c);
+  cc1101.writeReg(0x0B, 0x06);
 
   // FSCTRL0 - Frequency Synthesizer Control
   cc1101.writeReg(0x0C, 0x00); // 0x00 is default
@@ -107,7 +107,7 @@ void setup()
 
   // MDMCFG3 - Data Rate
   // DRATE = 1000000.0 * MHZ * (256+drate_m) * powf(2,drate_e) / powf(2,28);
-  cc1101.writeReg(0x11, 0x06);
+  cc1101.writeReg(0x11, 0xe7);
   // -----------------------
 
   // MDMCFG2 - Modulation type (OOK/ASK) / manchester / sync mode
@@ -120,6 +120,12 @@ void setup()
   // MDMCFG0 - Channel spacing
   cc1101.writeReg(0x14, 0x11);
 
+  // Deviation
+  cc1101.writeReg(0x15, 0x36);
+
+  // FOCCFG
+  cc1101.writeReg(0x19, 0x17);
+  
   // FREND1 - Select PATABLE index to use when sending a '1'
   cc1101.writeReg(0x21, 0xb6);
 
@@ -184,6 +190,10 @@ void setup()
   Serial.println(cc1101.readReg(0x13, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("MDMCFG0: Mantissa of channel spacing - 0x");
   Serial.println(cc1101.readReg(0x14, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("Deviation - 0x");
+  Serial.println(cc1101.readReg(0x15, CC1101_CONFIG_REGISTER), HEX);
+  Serial.print("FOCCFG - 0x");
+  Serial.println(cc1101.readReg(0x19, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("FREND1: Front end RX configuration - 0x");
   Serial.println(cc1101.readReg(0x21, CC1101_CONFIG_REGISTER), HEX);
   Serial.print("FREND0: Front end TX configuration - 0x");
