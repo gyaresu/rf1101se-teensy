@@ -18,6 +18,11 @@
   @gareth__
 */
 
+/*  ** TO USE **
+    For TX comment out send_data() function in the main loop 
+    For RX comment out attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
+ */
+ 
 CC1101 cc1101;
 
 SPI spi;
@@ -121,10 +126,10 @@ void setup()
   cc1101.writeReg(0x14, 0x11);
 
   // Deviation
-  cc1101.writeReg(0x15, 0x36);
+  cc1101.writeReg(0x15, 0x36); // https://twitter.com/gareth__/status/801191335566839808
 
   // FOCCFG
-  cc1101.writeReg(0x19, 0x17);
+  cc1101.writeReg(0x19, 0x17); // From 0x15 in the library
   
   // FREND1 - Select PATABLE index to use when sending a '1'
   cc1101.writeReg(0x21, 0xb6);
