@@ -84,7 +84,7 @@ void setup()
   cc1101.writeReg(0x08, 0x05); // CRC and variable packet length
 
   // ADDR - An arbitrary address used to filter out messages intended for this radio
-  cc1101.writeReg(0x09, 0xbd); // Effectively the Hostname
+  cc1101.writeReg(0x09, 0xdb); // Effectively the Hostname
 
   // CHANNR - Channel Number
   cc1101.writeReg(0x0A, 0x00); // 0x00 is default
@@ -202,7 +202,7 @@ void setup()
   // You can set an interupt or poll on GDO0, pin 2 (page 35)
   // If you get an error (digitalPinToInterrupt is not declared in this scope)
   // Then you can set the interrupt number manually with just a '0'
-  //attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
+  attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
 }
 
 void ReadLQI()
@@ -310,7 +310,7 @@ void receive_data()
 
 void loop()
 {
-  send_data();
+  //send_data();
 
   delay(1000);
 
