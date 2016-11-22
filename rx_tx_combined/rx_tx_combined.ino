@@ -202,7 +202,7 @@ void setup()
   // You can set an interupt or poll on GDO0, pin 2 (page 35)
   // If you get an error (digitalPinToInterrupt is not declared in this scope)
   // Then you can set the interrupt number manually with just a '0'
-  //attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
+  attachInterrupt(digitalPinToInterrupt(2), isr, FALLING);
 }
 
 void ReadLQI()
@@ -310,6 +310,11 @@ void receive_data()
 
 void loop()
 {
+<<<<<<< HEAD
+=======
+  //send_data();
+
+>>>>>>> c2ba4fc9acd890776ff57f826c53dfe434263876
   delay(1000);
   send_data();
 
