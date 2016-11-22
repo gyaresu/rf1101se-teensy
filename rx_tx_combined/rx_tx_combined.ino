@@ -84,7 +84,7 @@ void setup()
   cc1101.writeReg(0x08, 0x05); // CRC and variable packet length
 
   // ADDR - An arbitrary address used to filter out messages intended for this radio
-  cc1101.writeReg(0x09, 0xbd); // Effectively the Hostname
+  cc1101.writeReg(0x09, 0xdb); // Effectively the Hostname
 
   // CHANNR - Channel Number
   cc1101.writeReg(0x0A, 0x00); // 0x00 is default
@@ -239,7 +239,7 @@ void ReadRSSI()
 
 void isr()
 {
-  Serial.println("Interrupt triggered.");
+  Serial.println("RX Interrupt");
   trigger = true;
 }
 
@@ -258,16 +258,16 @@ void send_data() {
   data.length = sizeof(thing);
 
   if (cc1101.sendData(data)) {
-    Serial.println("Packet sent ok :)");
-    Serial.print("Packet length is: ");
-    Serial.print(data.length);
-    Serial.println(" bytes.");
+    //Serial.println("Packet sent ok :)");
+    //Serial.print("Packet length is: ");
+    //Serial.print(data.length);
+    //Serial.println(" bytes.");
     for (int i = 1; i < data.length; i++) {
       Serial.write(data.data[i]);
       Serial.print("");
     }
     Serial.println("");
-    Serial.print("Packet count: ");
+    Serial.print("TX count: ");
     Serial.println(txcount++);
   } else {
     Serial.println("sent failed :(");
@@ -290,9 +290,9 @@ void receive_data()
   if (cc1101.receiveData(&packet) > 0) {
     ReadRSSI();
     ReadLQI();
-    Serial.print("packet: len ");
-    Serial.println(packet.length);
-    Serial.print(" data: ");
+    //Serial.print("RX packet: len ");
+    //Serial.println(packet.length);
+    Serial.print("Received: ");
     for (int i = 1; i < packet.length; i++) {
       Serial.write(packet.data[i]);
       if (i == 50) {
@@ -300,7 +300,7 @@ void receive_data()
       }
     }
     Serial.println("");
-    Serial.print("Packet count: ");
+    Serial.print("RX count: ");
     Serial.println(rxcount++);
   }
 
@@ -310,9 +310,8 @@ void receive_data()
 
 void loop()
 {
-  send_data();
-
   delay(1000);
+  send_data();
 
   if (trigger) {
     receive_data();
